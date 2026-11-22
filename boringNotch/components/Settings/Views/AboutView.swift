@@ -69,8 +69,6 @@ struct AboutView: View {
                     Text("Version info")
                 }
 
-                UpdaterSettingsView(updater: updaterController.updater)
-
                 HStack(spacing: 30) {
                     Spacer(minLength: 0)
                     Button {
@@ -115,9 +113,6 @@ struct AboutView: View {
                     .padding(.horizontal, 10)
             }
             .frame(maxWidth: .infinity, alignment: .center)
-        }
-        .toolbar {
-            CheckForUpdatesView(updater: updaterController.updater)
         }
         .navigationTitle("About")
     }

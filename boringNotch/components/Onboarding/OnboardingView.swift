@@ -155,11 +155,9 @@ struct OnboardingView: View {
                 MusicControllerSelectionView(
                     onContinue: {
                         withAnimation(.easeInOut(duration: 0.6)) {
-                            if BoringViewCoordinator.shared.firstLaunch {
-                                step = .softwareUpdatePermission
-                            } else {
-                                step = .finished
-                            }
+                            // Fork: no software-update step, Sparkle is disabled in this build.
+                            BoringViewCoordinator.shared.firstLaunch = false
+                            step = .finished
                         }
                     }
                 )
