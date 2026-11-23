@@ -30285,6 +30285,16 @@
         }
       }
     },
+    "Target: %lld min" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obiettivo: %lld min"
+          }
+        }
+      }
+    },
     "The background helper crashed or was closed by macOS. It restarts automatically on the next OSD event." : {
       "localizations" : {
         "fr" : {

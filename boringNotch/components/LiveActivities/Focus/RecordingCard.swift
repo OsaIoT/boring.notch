@@ -17,8 +17,6 @@ struct RecordingCard: View {
     @Default(.focusRecordCamera) private var recordCamera
     @Default(.focusRecordScreen) private var recordScreen
 
-    static let width: CGFloat = 236
-
     /// The recording in progress, or the one the mode picker describes.
     private var displayedSource: RecordingSource {
         if recorder.isBusy, let active = recorder.activeSource {
@@ -58,8 +56,7 @@ struct RecordingCard: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 9)
-        .frame(width: Self.width, alignment: .leading)
-        .frame(maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.white.opacity(0.06))

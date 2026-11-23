@@ -12,10 +12,18 @@ import Defaults
 import SwiftUI
 
 struct FocusTabView: View {
+    private let spacing: CGFloat = 10
+
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            StopwatchCard()
-            RecordingCard()
+        // Exactly half each, whatever the cards contain.
+        GeometryReader { proxy in
+            let cardWidth = max(0, (proxy.size.width - spacing) / 2)
+            HStack(alignment: .top, spacing: spacing) {
+                StopwatchCard()
+                    .frame(width: cardWidth)
+                RecordingCard()
+                    .frame(width: cardWidth)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
@@ -104,8 +112,9 @@ struct StopwatchCard: View {
                 TargetChip(isSelected: selected == TimeInterval(minutes * 60)) {
                     stopwatch.setTarget(minutes: minutes)
                 } label: {
-                    Text(verbatim: "\(Self.difficultyInitials[index]) \(minutes)\u{2032}")
+                    Text(verbatim: "\(Self.difficultyInitials[index]) \(minutes)")
                 }
+                .help(Text("Target: \(minutes) min"))
             }
         }
     }
@@ -148,7 +157,7 @@ private struct TargetChip<Label: View>: View {
             label()
                 .font(.system(size: 11, weight: .semibold, design: .rounded))
                 .foregroundStyle(isSelected ? .white : .gray)
-                .padding(.horizontal, 7)
+                .padding(.horizontal, 6)
                 .frame(height: 22)
                 .background(Capsule().fill(Color.white.opacity(isSelected ? 0.2 : 0.07)))
                 .contentShape(Capsule())
