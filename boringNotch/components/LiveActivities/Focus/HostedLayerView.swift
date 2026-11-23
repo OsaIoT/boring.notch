@@ -29,7 +29,7 @@ struct HostedLayerView: NSViewRepresentable {
     }
 }
 
-final class HostedLayerNSView: NSView {
+class HostedLayerNSView: NSView {
     private var hostedLayer: CALayer?
 
     override init(frame frameRect: NSRect) {

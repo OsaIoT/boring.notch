@@ -5,7 +5,8 @@
 //  SPDX-License-Identifier: GPL-3.0-only
 //
 //  Owns Focus recordings: permissions, where the file goes, start / pause /
-//  stop, markers, and what happens once the video is saved.
+//  stop for the webcam, the screen or both (with the webcam bubble),
+//  markers, and what happens once the video is saved.
 //
 
 import AVFoundation
@@ -17,8 +18,17 @@ import Foundation
 final class RecordingManager: ObservableObject {
     static let shared = RecordingManager()
 
+    /// Screen recording uses ScreenCaptureKit's SCRecordingOutput.
+    static var canRecordScreen: Bool {
+        if #available(macOS 15.0, *) {
+            return true
+        }
+        return false
+    }
+
     enum Failure: Equatable {
         case permission(FocusPermission)
+        case noSource
         case message(String)
     }
 
@@ -32,7 +42,13 @@ final class RecordingManager: ObservableObject {
         case failed(Failure)
     }
 
+    private struct ScreenRecordingUnavailable: LocalizedError {
+        var errorDescription: String? { String(localized: "Screen recording needs macOS 15 or later.") }
+    }
+
     @Published private(set) var phase: Phase = .idle
+    /// What the current (or last) recording captures.
+    @Published private(set) var activeSource: RecordingSource?
     /// Recording time, pauses excluded: the same model as the stopwatch.
     @Published private(set) var clock = StopwatchState()
     @Published private(set) var markers: [RecordingMarker] = []
@@ -47,6 +63,10 @@ final class RecordingManager: ObservableObject {
             self?.recordingEndedUnexpectedly(url: url, error: error)
         }
     }
+    /// A ScreenRecorder on macOS 15+, typed loosely so this class still
+    /// loads on macOS 14.
+    private var screenRecorderStorage: AnyObject?
+    private let bubble = CameraBubbleController()
     private var folder: RecordingFolder?
     private var phaseResetTask: Task<Void, Never>?
 
@@ -55,12 +75,24 @@ final class RecordingManager: ObservableObject {
     var isRecording: Bool { phase == .recording || phase == .paused }
     /// From the moment a recording is requested until its file is saved.
     var isBusy: Bool { phase == .starting || phase == .finishing || isRecording }
-    var usesCamera: Bool { isBusy }
+    var usesCamera: Bool { isBusy && activeSource?.usesCamera == true }
+    /// Only webcam recordings can pause: SCRecordingOutput has no pause.
+    var canPause: Bool { activeSource == .camera }
     /// Whether the closed notch shows the recording pill (including the
     /// short "saved" / "failed" confirmations).
     var showsInNotch: Bool { phase != .idle }
     /// The recorder's own preview layer, to host as-is (see CameraRecorder).
-    var previewLayer: AVCaptureVideoPreviewLayer? { isRecording ? cameraRecorder.previewLayer : nil }
+    var previewLayer: AVCaptureVideoPreviewLayer? {
+        isRecording && activeSource?.usesCamera == true ? cameraRecorder.previewLayer : nil
+    }
+
+    /// What the next recording will capture, from the Focus tab's toggles.
+    var selectedSource: RecordingSource? {
+        RecordingSource(
+            camera: Defaults[.focusRecordCamera],
+            screen: Defaults[.focusRecordScreen] && Self.canRecordScreen
+        )
+    }
 
     func toggle() {
         if isRecording {
@@ -83,6 +115,7 @@ final class RecordingManager: ObservableObject {
     }
 
     func togglePause() {
+        guard canPause else { return }
         switch phase {
         case .recording:
             cameraRecorder.pause()
@@ -120,17 +153,33 @@ final class RecordingManager: ObservableObject {
         withFolderAccess { NSWorkspace.shared.activateFileViewerSelecting([url]) }
     }
 
+    /// The screen picked in Settings, or the one with the pointer.
+    static func targetScreen() -> NSScreen? {
+        if let id = Defaults[.focusDisplayID],
+           let screen = NSScreen.screens.first(where: { $0.cgDisplayID == CGDirectDisplayID(truncatingIfNeeded: id) }) {
+            return screen
+        }
+        let pointer = NSEvent.mouseLocation
+        return NSScreen.screens.first { NSMouseInRect(pointer, $0.frame, false) } ?? NSScreen.main
+    }
+
     // MARK: - Recording lifecycle
 
     private func beginRecording() async {
-        guard await FocusPermission.camera.ensureAccess() else {
-            fail(.permission(.camera))
+        guard let source = selectedSource else {
+            fail(.noSource)
             return
         }
+        activeSource = source
         let includeMicrophone = Defaults[.focusRecordMicrophone]
-        if includeMicrophone {
-            guard await FocusPermission.microphone.ensureAccess() else {
-                fail(.permission(.microphone))
+
+        var needed: [FocusPermission] = []
+        if source.usesCamera { needed.append(.camera) }
+        if includeMicrophone { needed.append(.microphone) }
+        if source.usesScreen { needed.append(.screen) }
+        for permission in needed {
+            guard await permission.ensureAccess() else {
+                fail(.permission(permission))
                 return
             }
         }
@@ -138,21 +187,37 @@ final class RecordingManager: ObservableObject {
         do {
             let folder = try RecordingLibrary.openFolder()
             self.folder = folder
-            let url = RecordingLibrary.movieURL(in: folder.url, source: .camera, date: Date())
-            mirrorCamera?.stopSession()
-            let configuration = CameraRecorder.Configuration(
-                cameraID: Defaults[.focusCameraID],
-                microphoneID: Defaults[.focusMicrophoneID],
-                includeMicrophone: includeMicrophone,
-                quality: Defaults[.focusRecordingQuality],
-                mirrorPreview: Defaults[.isMirrored]
-            )
-            try await cameraRecorder.start(configuration, to: url)
+            let url = RecordingLibrary.movieURL(in: folder.url, source: source, date: Date())
+            let screen = Self.targetScreen()
+            if source.usesCamera {
+                mirrorCamera?.stopSession()
+            }
+
+            switch source {
+            case .camera:
+                try await cameraRecorder.start(cameraConfiguration(includeMicrophone: includeMicrophone), to: url)
+                if Defaults[.focusBubbleInCameraMode] {
+                    bubble.show(previewLayer: cameraRecorder.bubblePreviewLayer, on: screen)
+                }
+            case .screen:
+                try await startScreenRecording(to: url, on: screen, includeMicrophone: includeMicrophone)
+            case .screenAndCamera:
+                // The camera only feeds the bubble; the microphone goes
+                // through the screen recording.
+                try await cameraRecorder.startPreview(cameraConfiguration(includeMicrophone: false))
+                bubble.show(previewLayer: cameraRecorder.bubblePreviewLayer, on: screen)
+                do {
+                    try await startScreenRecording(to: url, on: screen, includeMicrophone: includeMicrophone)
+                } catch {
+                    stopCameraExtras()
+                    throw error
+                }
+            }
             markers = []
             clock = StopwatchState()
             clock.start(at: Date())
             phase = .recording
-            Log.general.info("Focus recording started")
+            Log.general.info("Focus recording started: \(source.rawValue, privacy: .public)")
         } catch {
             releaseFolder()
             fail(.message(error.localizedDescription))
@@ -164,9 +229,16 @@ final class RecordingManager: ObservableObject {
         clock.pause(at: Date())
         phase = .finishing
         do {
-            let url = try await cameraRecorder.stop()
+            let url: URL
+            if activeSource?.usesScreen == true {
+                url = try await stopScreenRecording()
+            } else {
+                url = try await cameraRecorder.stop()
+            }
+            stopCameraExtras()
             didSave(url, duration: duration)
         } catch {
+            stopCameraExtras()
             releaseFolder()
             fail(.message(error.localizedDescription))
         }
@@ -180,6 +252,7 @@ final class RecordingManager: ObservableObject {
         )
         let duration = clock.elapsed(at: Date())
         clock.pause(at: Date())
+        stopCameraExtras()
         if let url {
             didSave(url, duration: duration)
         } else {
@@ -216,6 +289,58 @@ final class RecordingManager: ObservableObject {
             guard !Task.isCancelled else { return }
             self?.phase = .idle
         }
+    }
+
+    // MARK: - Camera and screen
+
+    private func cameraConfiguration(includeMicrophone: Bool) -> CameraRecorder.Configuration {
+        CameraRecorder.Configuration(
+            cameraID: Defaults[.focusCameraID],
+            microphoneID: Defaults[.focusMicrophoneID],
+            includeMicrophone: includeMicrophone,
+            quality: Defaults[.focusRecordingQuality],
+            mirrorPreview: Defaults[.isMirrored]
+        )
+    }
+
+    /// Hides the bubble and, for screen + webcam, stops the preview-only
+    /// camera session.
+    private func stopCameraExtras() {
+        bubble.hide()
+        if activeSource == .screenAndCamera {
+            cameraRecorder.stopPreview()
+        }
+    }
+
+    private func startScreenRecording(to url: URL, on screen: NSScreen?, includeMicrophone: Bool) async throws {
+        guard #available(macOS 15.0, *) else { throw ScreenRecordingUnavailable() }
+        let configuration = ScreenRecorder.Configuration(
+            displayID: screen?.cgDisplayID ?? CGMainDisplayID(),
+            includeMicrophone: includeMicrophone,
+            microphoneID: Defaults[.focusMicrophoneID],
+            showsClicks: Defaults[.focusShowClicks],
+            quality: Defaults[.focusRecordingQuality]
+        )
+        try await screenRecorder().start(configuration, to: url)
+    }
+
+    private func stopScreenRecording() async throws -> URL {
+        guard #available(macOS 15.0, *) else { throw ScreenRecordingUnavailable() }
+        return try await screenRecorder().stop()
+    }
+
+    @available(macOS 15.0, *)
+    private func screenRecorder() -> ScreenRecorder {
+        if let recorder = screenRecorderStorage as? ScreenRecorder {
+            return recorder
+        }
+        let recorder = ScreenRecorder { [weak self] url, error in
+            Task { @MainActor in
+                self?.recordingEndedUnexpectedly(url: url, error: error)
+            }
+        }
+        screenRecorderStorage = recorder
+        return recorder
     }
 
     // MARK: - Files

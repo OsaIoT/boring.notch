@@ -555,6 +555,15 @@ extension Defaults.Keys {
     static let focusRecordingFolderBookmark = Key<Data?>("focusRecordingFolderBookmark", default: nil)
     static let focusAddRecordingsToShelf = Key<Bool>("focusAddRecordingsToShelf", default: true)
     static let focusOpenRecordingWhenDone = Key<Bool>("focusOpenRecordingWhenDone", default: false)
+    static let focusRecordCamera = Key<Bool>("focusRecordCamera", default: true)
+    static let focusRecordScreen = Key<Bool>("focusRecordScreen", default: false)
+    /// CGDirectDisplayID of the screen to record; nil means the one with the pointer.
+    static let focusDisplayID = Key<Int?>("focusDisplayID", default: nil)
+    static let focusShowClicks = Key<Bool>("focusShowClicks", default: true)
+    static let focusBubbleSize = Key<BubbleSize>("focusBubbleSize", default: .medium)
+    static let focusBubbleInCameraMode = Key<Bool>("focusBubbleInCameraMode", default: false)
+    /// Bottom-left corner of the webcam bubble, in screen coordinates.
+    static let focusBubbleOrigin = Key<[Double]?>("focusBubbleOrigin", default: nil)
 
     // MARK: Calendar
     static let calendarSelectionState = Key<CalendarSelectionState>("calendarSelectionState", default: .all)

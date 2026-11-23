@@ -19,7 +19,15 @@ struct FocusSettingsView: View {
     @Default(.focusMicrophoneID) private var microphoneID
     @Default(.focusRecordingQuality) private var quality
     @Default(.focusRecordingFolderBookmark) private var folderBookmark
+    @Default(.focusDisplayID) private var displayID
+    @Default(.focusBubbleSize) private var bubbleSize
     @State private var microphones: [AudioInputDevice] = []
+    @State private var screens: [ScreenChoice] = []
+
+    private struct ScreenChoice: Identifiable {
+        let id: Int
+        let name: String
+    }
 
     private static let difficultyNames: [LocalizedStringKey] = ["Easy", "Medium", "Hard"]
     /// Minutes a target can be set to.
@@ -44,6 +52,10 @@ struct FocusSettingsView: View {
 
             recordingSection
 
+            if RecordingManager.canRecordScreen {
+                screenSection
+            }
+
             savingSection
 
             Section {
@@ -60,6 +72,9 @@ struct FocusSettingsView: View {
         .onAppear {
             camera.refresh()
             microphones = CameraRecorder.availableMicrophones()
+            screens = NSScreen.screens.compactMap { screen in
+                screen.cgDisplayID.map { ScreenChoice(id: Int($0), name: screen.localizedName) }
+            }
         }
     }
 
@@ -123,6 +138,35 @@ struct FocusSettingsView: View {
             Text("Recording")
         } footer: {
             HelpText("Automatic uses the Mac's built-in camera first, so an iPhone nearby isn't picked by mistake.")
+        }
+    }
+
+    private var screenSection: some View {
+        Section {
+            Picker("Screen to record", selection: $displayID) {
+                Text("The one with the pointer").tag(Int?.none)
+                ForEach(screens) { screen in
+                    Text(verbatim: screen.name).tag(Int?.some(screen.id))
+                }
+            }
+            Defaults.Toggle(key: .focusShowClicks) {
+                Text("Highlight clicks")
+            }
+            Defaults.Toggle(key: .hideFromScreenRecording) {
+                Text("Hide the notch in screen recordings")
+            }
+            Picker("Webcam bubble", selection: $bubbleSize) {
+                Text("Compact").tag(BubbleSize.small)
+                Text("Regular").tag(BubbleSize.medium)
+                Text("Large").tag(BubbleSize.large)
+            }
+            Defaults.Toggle(key: .focusBubbleInCameraMode) {
+                Text("Show the bubble when recording only the webcam")
+            }
+        } header: {
+            Text("Screen")
+        } footer: {
+            HelpText("With webcam and screen on together, a round bubble with your webcam floats on screen and ends up in the video. Drag it where you like: it remembers the spot. Screen recordings can't be paused.")
         }
     }
 

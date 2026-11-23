@@ -17,6 +17,19 @@ enum RecordingSource: String, Sendable {
     case screen
     case screenAndCamera
 
+    /// From the Focus tab's Webcam and Screen toggles; nil when both are off.
+    init?(camera: Bool, screen: Bool) {
+        switch (camera, screen) {
+        case (true, false): self = .camera
+        case (false, true): self = .screen
+        case (true, true): self = .screenAndCamera
+        case (false, false): return nil
+        }
+    }
+
+    var usesCamera: Bool { self != .screen }
+    var usesScreen: Bool { self != .camera }
+
     /// Used in file names, so it follows the app language.
     var fileLabel: String {
         switch self {

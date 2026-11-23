@@ -4,7 +4,8 @@
 //
 //  SPDX-License-Identifier: GPL-3.0-only
 //
-//  Focus-tab controls for filming yourself while you think out loud.
+//  Focus-tab controls for recording yourself while you think out loud:
+//  webcam, screen, or both (with the webcam bubble).
 //
 
 import Defaults
@@ -13,16 +14,31 @@ import SwiftUI
 struct RecordingCard: View {
     @ObservedObject private var recorder = RecordingManager.shared
     @Default(.focusRecordMicrophone) private var includeMicrophone
+    @Default(.focusRecordCamera) private var recordCamera
+    @Default(.focusRecordScreen) private var recordScreen
 
     static let width: CGFloat = 236
+
+    private var recordsScreen: Bool { recordScreen && RecordingManager.canRecordScreen }
+
+    /// The recording in progress, or the one the toggles describe.
+    private var displayedSource: RecordingSource {
+        if recorder.isBusy, let active = recorder.activeSource {
+            return active
+        }
+        return RecordingSource(camera: recordCamera, screen: recordsScreen) ?? .camera
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .center, spacing: 10) {
                 preview
                 VStack(alignment: .leading, spacing: 6) {
-                    controls
-                    status
+                    HStack(spacing: 6) {
+                        recordButton
+                        status
+                    }
+                    secondaryControls
                 }
                 Spacer(minLength: 0)
             }
@@ -38,6 +54,8 @@ struct RecordingCard: View {
         )
     }
 
+    // MARK: - Pieces
+
     private var preview: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -46,32 +64,19 @@ struct RecordingCard: View {
                 HostedLayerView(hostedLayer: previewLayer)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             } else {
-                Image(systemName: "web.camera")
+                Image(systemName: placeholderSymbol)
                     .font(.system(size: 18))
                     .foregroundStyle(.gray)
             }
         }
-        .frame(width: 80, height: 60)
+        .frame(width: 76, height: 57)
     }
 
-    private var controls: some View {
-        HStack(spacing: 2) {
-            recordButton
-            if recorder.isRecording {
-                HoverButton(icon: recorder.phase == .paused ? "play.fill" : "pause.fill", iconColor: .white) {
-                    recorder.togglePause()
-                }
-                .help(recorder.phase == .paused ? Text("Resume recording") : Text("Pause recording"))
-            } else {
-                HoverButton(
-                    icon: includeMicrophone ? "mic.fill" : "mic.slash.fill",
-                    iconColor: includeMicrophone ? .white : .gray
-                ) {
-                    includeMicrophone.toggle()
-                }
-                .disabled(recorder.isBusy)
-                .help(includeMicrophone ? Text("Microphone on") : Text("Microphone off"))
-            }
+    private var placeholderSymbol: String {
+        switch displayedSource {
+        case .camera: "web.camera"
+        case .screen: "display"
+        case .screenAndCamera: "pip"
         }
     }
 
@@ -98,7 +103,7 @@ struct RecordingCard: View {
         }
         .buttonStyle(.plain)
         .disabled(recorder.phase == .starting || recorder.phase == .finishing)
-        .help(recorder.isRecording ? Text("Stop recording") : Text("Record the webcam"))
+        .help(recorder.isRecording ? Text("Stop recording") : Text("Start recording"))
     }
 
     @ViewBuilder
@@ -115,7 +120,56 @@ struct RecordingCard: View {
         case .failed:
             statusLabel(Text("Not recorded"), systemImage: "exclamationmark.triangle.fill", color: .orange)
         case .idle:
-            statusLabel(includeMicrophone ? Text("Webcam and voice") : Text("Webcam only"), color: .gray)
+            statusLabel(sourceName, color: .gray)
+        }
+    }
+
+    private var sourceName: Text {
+        switch displayedSource {
+        case .camera: Text("Webcam")
+        case .screen: Text("Screen")
+        case .screenAndCamera: Text("Screen + webcam")
+        }
+    }
+
+    @ViewBuilder
+    private var secondaryControls: some View {
+        if recorder.isRecording {
+            if recorder.canPause {
+                HoverButton(icon: recorder.phase == .paused ? "play.fill" : "pause.fill", iconColor: .white) {
+                    recorder.togglePause()
+                }
+                .help(recorder.phase == .paused ? Text("Resume recording") : Text("Pause recording"))
+            } else {
+                Text("Screen recordings can't be paused.")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.gray)
+                    .lineLimit(2)
+            }
+        } else {
+            HStack(spacing: 4) {
+                SourceToggle(symbol: "web.camera", isOn: recordCamera, help: Text("Webcam")) {
+                    recordCamera.toggle()
+                }
+                // At least one of webcam and screen stays on.
+                .disabled(recorder.isBusy || (recordCamera && !recordsScreen))
+
+                if RecordingManager.canRecordScreen {
+                    SourceToggle(symbol: "display", isOn: recordScreen, help: Text("Screen")) {
+                        recordScreen.toggle()
+                    }
+                    .disabled(recorder.isBusy || (recordScreen && !recordCamera))
+                }
+
+                SourceToggle(
+                    symbol: includeMicrophone ? "mic.fill" : "mic.slash.fill",
+                    isOn: includeMicrophone,
+                    help: includeMicrophone ? Text("Microphone on") : Text("Microphone off")
+                ) {
+                    includeMicrophone.toggle()
+                }
+                .disabled(recorder.isBusy)
+            }
         }
     }
 
@@ -150,26 +204,38 @@ struct RecordingCard: View {
     private func failureFooter(_ failure: RecordingManager.Failure) -> some View {
         switch failure {
         case .permission(let permission):
-            HStack(spacing: 4) {
-                (permission == .camera ? Text("Camera access is off.") : Text("Microphone access is off."))
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                permissionMessage(permission)
                     .foregroundStyle(.orange)
-                    .lineLimit(1)
+                    .lineLimit(2)
                 Spacer(minLength: 4)
-                Button {
+                linkButton(Text("Settings")) {
                     permission.openSystemSettings()
-                } label: {
-                    Text("Settings")
-                        .underline()
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(.white)
+                if permission == .screen {
+                    linkButton(Text("Restart")) {
+                        ApplicationRelauncher.restart()
+                    }
+                }
             }
             .font(.system(size: 11))
+        case .noSource:
+            Text("Choose the webcam, the screen or both.")
+                .font(.system(size: 11))
+                .foregroundStyle(.orange)
         case .message(let message):
             Text(verbatim: message)
                 .font(.system(size: 11))
                 .foregroundStyle(.orange)
                 .lineLimit(2)
+        }
+    }
+
+    private func permissionMessage(_ permission: FocusPermission) -> Text {
+        switch permission {
+        case .camera: Text("Camera access is off.")
+        case .microphone: Text("Microphone access is off.")
+        case .screen: Text("Allow screen recording, then restart.")
         }
     }
 
@@ -183,6 +249,15 @@ struct RecordingCard: View {
         .font(.system(size: 12, weight: .medium))
         .foregroundStyle(color)
         .lineLimit(1)
+        .minimumScaleFactor(0.8)
+    }
+
+    private func linkButton(_ title: Text, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            title.underline()
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.white)
     }
 
     private func footerButton(_ systemImage: String, help: Text, action: @escaping () -> Void) -> some View {
@@ -193,6 +268,33 @@ struct RecordingCard: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .help(help)
+    }
+}
+
+/// A small on/off button for one recording source.
+private struct SourceToggle: View {
+    let symbol: String
+    let isOn: Bool
+    let help: Text
+    let action: () -> Void
+
+    @Environment(\.isEnabled) var isEnabled
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(isOn ? Color.white : Color.gray)
+                .frame(width: 28, height: 24)
+                .background(
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .fill(Color.white.opacity(isOn ? 0.18 : 0.05))
+                )
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .opacity(isEnabled ? 1 : 0.55)
         .help(help)
     }
 }

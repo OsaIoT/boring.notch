@@ -60,6 +60,8 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
     /// then ends the movie file after a fraction of a second. Views only
     /// host this layer.
     let previewLayer: AVCaptureVideoPreviewLayer
+    /// Same, for the floating bubble. Created up front for the same reason.
+    let bubblePreviewLayer: AVCaptureVideoPreviewLayer
 
     private let output = AVCaptureMovieFileOutput()
     private let queue = DispatchQueue(label: "BoringNotch.Focus.CameraRecorder", qos: .userInitiated)
@@ -76,8 +78,11 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         let session = AVCaptureSession()
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.videoGravity = .resizeAspectFill
+        let bubblePreviewLayer = AVCaptureVideoPreviewLayer(session: session)
+        bubblePreviewLayer.videoGravity = .resizeAspectFill
         self.session = session
         self.previewLayer = previewLayer
+        self.bubblePreviewLayer = bubblePreviewLayer
         super.init()
     }
 
@@ -87,7 +92,7 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             queue.async {
                 do {
-                    try self.configure(configuration)
+                    try self.configure(configuration, recordsToFile: true)
                     if !self.session.isRunning {
                         self.session.startRunning()
                     }
@@ -98,6 +103,32 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
                     continuation.resume(throwing: error)
                 }
             }
+        }
+    }
+
+    /// Runs the camera for the previews only, with no file and no
+    /// microphone: in screen recordings the bubble is captured with the rest
+    /// of the screen.
+    func startPreview(_ configuration: Configuration) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            queue.async {
+                do {
+                    try self.configure(configuration, recordsToFile: false)
+                    if !self.session.isRunning {
+                        self.session.startRunning()
+                    }
+                    continuation.resume()
+                } catch {
+                    self.teardown()
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    func stopPreview() {
+        queue.async {
+            self.teardown()
         }
     }
 
@@ -131,7 +162,7 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         }
     }
 
-    private func configure(_ configuration: Configuration) throws {
+    private func configure(_ configuration: Configuration, recordsToFile: Bool) throws {
         guard let camera = Self.camera(matching: configuration.cameraID) else {
             throw RecorderError.noCamera
         }
@@ -146,28 +177,36 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
             throw RecorderError.cameraUnavailable
         }
         session.addInput(cameraInput)
-        let preset = configuration.quality.sessionPreset
+        // A bubble doesn't need 1080p.
+        let preset = recordsToFile ? configuration.quality.sessionPreset : .hd1280x720
         session.sessionPreset = session.canSetSessionPreset(preset) ? preset : .high
 
-        if configuration.includeMicrophone,
+        if recordsToFile,
+           configuration.includeMicrophone,
            let microphone = Self.microphone(matching: configuration.microphoneID),
            let microphoneInput = try? AVCaptureDeviceInput(device: microphone),
            session.canAddInput(microphoneInput) {
             session.addInput(microphoneInput)
         }
 
-        guard session.canAddOutput(output) else {
-            session.commitConfiguration()
-            throw RecorderError.cameraUnavailable
+        if recordsToFile {
+            guard session.canAddOutput(output) else {
+                session.commitConfiguration()
+                throw RecorderError.cameraUnavailable
+            }
+            session.addOutput(output)
         }
-        session.addOutput(output)
         session.commitConfiguration()
-        applyVideoSettings(for: camera)
+        if recordsToFile {
+            applyVideoSettings(for: camera)
+        }
         // Before recording starts, like everything else that touches the
         // session's connections.
-        if let connection = previewLayer.connection, connection.isVideoMirroringSupported {
-            connection.automaticallyAdjustsVideoMirroring = false
-            connection.isVideoMirrored = configuration.mirrorPreview
+        for layer in [previewLayer, bubblePreviewLayer] {
+            if let connection = layer.connection, connection.isVideoMirroringSupported {
+                connection.automaticallyAdjustsVideoMirroring = false
+                connection.isVideoMirrored = configuration.mirrorPreview
+            }
         }
     }
 

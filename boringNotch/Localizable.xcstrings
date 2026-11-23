@@ -1688,6 +1688,16 @@
         }
       }
     },
+    "Allow screen recording, then restart." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consenti la registrazione dello schermo, poi riavvia."
+          }
+        }
+      }
+    },
     "Always follow active display" : {
       "comment" : "A toggle that allows the user to have Boring Notch follow the active display.",
       "localizations" : {
@@ -6523,6 +6533,16 @@
         }
       }
     },
+    "Choose the webcam, the screen or both." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli la webcam, lo schermo o entrambi."
+          }
+        }
+      }
+    },
     "Choose where Focus recordings are saved." : {
       "localizations" : {
         "it" : {
@@ -7391,6 +7411,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "彩色頻譜圖"
+          }
+        }
+      }
+    },
+    "Compact" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatta"
           }
         }
       }
@@ -14405,6 +14435,16 @@
         }
       }
     },
+    "Hide the notch in screen recordings" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nascondi il notch nelle registrazioni"
+          }
+        }
+      }
+    },
     "Hide title bar" : {
       "localizations" : {
         "de" : {
@@ -14820,6 +14860,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "高"
+          }
+        }
+      }
+    },
+    "Highlight clicks" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evidenzia i clic"
           }
         }
       }
@@ -23994,6 +24044,16 @@
         }
       }
     },
+    "Regular" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normale"
+          }
+        }
+      }
+    },
     "Release name" : {
       "localizations" : {
         "cs" : {
@@ -25456,6 +25516,16 @@
         }
       }
     },
+    "Restart" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riavvia"
+          }
+        }
+      }
+    },
     "Restart Boring Notch" : {
       "localizations" : {
         "cs" : {
@@ -25860,6 +25930,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schermo"
+          }
+        }
+      }
+    },
+    "Screen + webcam" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermo + webcam"
+          }
+        }
+      }
+    },
+    "Screen recording needs macOS 15 or later." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La registrazione dello schermo richiede macOS 15 o successivo."
+          }
+        }
+      }
+    },
+    "Screen recordings can't be paused." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La registrazione dello schermo non va in pausa."
+          }
+        }
+      }
+    },
+    "Screen to record" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermo da registrare"
           }
         }
       }
@@ -28872,6 +28982,16 @@
         }
       }
     },
+    "Show the bubble when recording only the webcam" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra la bolla anche quando registri solo la webcam"
+          }
+        }
+      }
+    },
     "Show the Focus tab" : {
       "localizations" : {
         "it" : {
@@ -29879,6 +29999,16 @@
         }
       }
     },
+    "Start recording" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvia la registrazione"
+          }
+        }
+      }
+    },
     "Starting…" : {
       "localizations" : {
         "it" : {
@@ -30235,12 +30365,32 @@
         }
       }
     },
+    "The one with the pointer" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quello col puntatore"
+          }
+        }
+      }
+    },
     "The recording stopped unexpectedly." : {
       "localizations" : {
         "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "La registrazione si è interrotta all'improvviso."
+          }
+        }
+      }
+    },
+    "The screen to record can't be found." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo schermo da registrare non è stato trovato."
           }
         }
       }
@@ -32909,6 +33059,16 @@
         }
       }
     },
+    "Webcam bubble" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bolla webcam"
+          }
+        }
+      }
+    },
     "Webcam only" : {
       "localizations" : {
         "it" : {
@@ -33308,6 +33468,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pencere"
+          }
+        }
+      }
+    },
+    "With webcam and screen on together, a round bubble with your webcam floats on screen and ends up in the video. Drag it where you like: it remembers the spot. Screen recordings can't be paused." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con webcam e schermo insieme, una bolla rotonda con la tua webcam fluttua sullo schermo e finisce nel video. Trascinala dove vuoi: ricorda la posizione. La registrazione dello schermo non va in pausa."
           }
         }
       }
