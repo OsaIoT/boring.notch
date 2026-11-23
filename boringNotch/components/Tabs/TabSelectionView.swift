@@ -48,15 +48,14 @@ struct TabSelectionView: View {
                     .frame(height: 26)
                     .foregroundStyle(tab.view == coordinator.currentView ? .white : .gray)
                     .background {
+                        // Only the selected tab draws the capsule. Hidden
+                        // capsules on the other tabs were extra sources in the
+                        // same matched-geometry group, so with three tabs the
+                        // highlight could land on the wrong one.
                         if tab.view == coordinator.currentView {
                             Capsule()
-                                .fill(coordinator.currentView == tab.view ? Color(nsColor: .secondarySystemFill) : Color.clear)
+                                .fill(Color(nsColor: .secondarySystemFill))
                                 .matchedGeometryEffect(id: "capsule", in: animation)
-                        } else {
-                            Capsule()
-                                .fill(coordinator.currentView == tab.view ? Color(nsColor: .secondarySystemFill) : Color.clear)
-                                .matchedGeometryEffect(id: "capsule", in: animation)
-                                .hidden()
                         }
                     }
             }
