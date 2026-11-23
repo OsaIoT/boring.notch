@@ -17,6 +17,13 @@ struct ShortcutsSettingsView: View {
                 Text("Notch")
             }
             Section {
+                KeyboardShortcuts.Recorder("Start or pause the stopwatch:", name: .focusToggleStopwatch)
+                KeyboardShortcuts.Recorder("Add a marker:", name: .focusAddMarker)
+                KeyboardShortcuts.Recorder("Reset the stopwatch:", name: .focusResetStopwatch)
+            } header: {
+                Text("Focus")
+            }
+            Section {
                 KeyboardShortcuts.Recorder("Toggle Sneak Peek:", name: .toggleSneakPeek)
             } header: {
                 Text("Media")

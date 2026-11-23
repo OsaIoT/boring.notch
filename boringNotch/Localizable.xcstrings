@@ -1158,6 +1158,16 @@
         }
       }
     },
+    "Add a marker:" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi un marker:"
+          }
+        }
+      }
+    },
     "Add Application…" : {
       "comment" : "A button that adds an application to the list of allowed notifications.",
       "localizations" : {
@@ -1320,6 +1330,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "手動添加"
+          }
+        }
+      }
+    },
+    "Add marker" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi marker"
           }
         }
       }
@@ -12417,6 +12437,16 @@
         }
       }
     },
+    "Flag key moments with the marker button." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segna i momenti chiave con il pulsante marker."
+          }
+        }
+      }
+    },
     "Flip video" : {
       "comment" : "A toggle to flip the video.",
       "localizations" : {
@@ -19649,6 +19679,16 @@
         }
       }
     },
+    "No target" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessun obiettivo"
+          }
+        }
+      }
+    },
     "Normalize gesture direction" : {
       "localizations" : {
         "de" : {
@@ -22366,6 +22406,16 @@
         }
       }
     },
+    "Play a sound when the target is reached" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riproduci un suono quando raggiungi l'obiettivo"
+          }
+        }
+      }
+    },
     "Play/Pause" : {
       "localizations" : {
         "fr" : {
@@ -25030,6 +25080,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "需要 macOS 14.2 或更高版本。更新 macOS 以启用实时音频波形。"
+          }
+        }
+      }
+    },
+    "Reset" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Azzera"
+          }
+        }
+      }
+    },
+    "Reset the stopwatch:" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Azzera il cronometro:"
           }
         }
       }
@@ -28502,6 +28572,26 @@
         }
       }
     },
+    "Show the Focus tab" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra il tab Focus"
+          }
+        }
+      }
+    },
+    "Show the stopwatch in the closed notch" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra il cronometro nel notch chiuso"
+          }
+        }
+      }
+    },
     "Shows a smaller opened notch with just the music player — no tabs, calendar or mirror." : {
       "localizations" : {
         "de" : {
@@ -29459,6 +29549,36 @@
         }
       }
     },
+    "Start" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvia"
+          }
+        }
+      }
+    },
+    "Start or pause the stopwatch:" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvia o metti in pausa il cronometro:"
+          }
+        }
+      }
+    },
+    "Stopwatch" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cronometro"
+          }
+        }
+      }
+    },
     "System" : {
       "localizations" : {
         "de" : {
@@ -29725,6 +29845,16 @@
         }
       }
     },
+    "Target times" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempi obiettivo"
+          }
+        }
+      }
+    },
     "The background helper crashed or was closed by macOS. It restarts automatically on the next OSD event." : {
       "localizations" : {
         "fr" : {
@@ -29761,6 +29891,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arka planda çalışan yardımcı süreç kapandı ya da macOS tarafından sonlandırıldı. Sıradaki OSD olayında kendiliğinden yeniden başlayacaktır."
+          }
+        }
+      }
+    },
+    "The time turns orange at 80% of the target and red once you go over it. The stopwatch keeps counting." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tempo diventa arancione all'80% dell'obiettivo e rosso quando lo superi. Il cronometro continua a contare."
           }
         }
       }
@@ -32665,6 +32805,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "歡迎"
+          }
+        }
+      }
+    },
+    "While the stopwatch is on, the closed notch shows the elapsed time. Swipe sideways on it to switch to music." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentre il cronometro è attivo, il notch chiuso mostra il tempo trascorso. Scorri di lato per passare alla musica."
           }
         }
       }

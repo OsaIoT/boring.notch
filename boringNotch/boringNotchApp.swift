@@ -321,6 +321,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
+        KeyboardShortcuts.onKeyDown(for: .focusToggleStopwatch) {
+            guard Defaults[.focusEnabled] else { return }
+            StopwatchManager.shared.toggle()
+        }
+        KeyboardShortcuts.onKeyDown(for: .focusAddMarker) {
+            guard Defaults[.focusEnabled] else { return }
+            StopwatchManager.shared.addMarker()
+        }
+        KeyboardShortcuts.onKeyDown(for: .focusResetStopwatch) {
+            guard Defaults[.focusEnabled] else { return }
+            StopwatchManager.shared.reset()
+        }
+
         // Sync notch height with real value on app launch if mode is matchRealNotchSize
         syncNotchHeightIfNeeded()
 

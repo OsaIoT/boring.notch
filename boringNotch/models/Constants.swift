@@ -536,6 +536,14 @@ extension Defaults.Keys {
     static let expandedDragDetection = Key<Bool>("expandedDragDetection", default: true)
     static let reverseShelfOrdering = Key<Bool>("reverseShelfOrdering", default: false)
 
+    // MARK: Focus (stopwatch)
+    static let focusEnabled = Key<Bool>("focusEnabled", default: true)
+    static let focusShowInClosedNotch = Key<Bool>("focusShowInClosedNotch", default: true)
+    static let focusTargetSound = Key<Bool>("focusTargetSound", default: true)
+    /// Target presets in minutes: Easy, Medium, Hard.
+    static let focusTargetPresets = Key<[Int]>("focusTargetPresets", default: StopwatchState.defaultTargetPresets)
+    static let focusStopwatchState = Key<StopwatchState>("focusStopwatchState", default: StopwatchState())
+
     // MARK: Calendar
     static let calendarSelectionState = Key<CalendarSelectionState>("calendarSelectionState", default: .all)
     static let hideAllDayEvents = Key<Bool>("hideAllDayEvents", default: false)

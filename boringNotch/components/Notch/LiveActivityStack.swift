@@ -22,11 +22,14 @@ import SwiftUI
 /// iOS separates them from live activities.
 enum LiveActivityItem: Identifiable, Equatable {
     case notification(SystemNotification)
+    /// The Focus stopwatch (and, later, recording) pill.
+    case focus
     case music
 
     var id: String {
         switch self {
         case .notification(let notification): "notification-\(notification.id)"
+        case .focus: "focus"
         case .music: "music"
         }
     }

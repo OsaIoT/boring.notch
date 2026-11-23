@@ -22,6 +22,9 @@ struct ContentView: View {
     @ObservedObject var brightnessManager = BrightnessManager.shared
     @ObservedObject var volumeManager = VolumeManager.shared
     @ObservedObject var notificationManager = SystemNotificationManager.shared
+    @ObservedObject var stopwatch = StopwatchManager.shared
+    @Default(.focusEnabled) var focusEnabled
+    @Default(.focusShowInClosedNotch) var focusShowInClosedNotch
     /// Which entry of the closed-notch activity stack is on top.
     @State private var activityIndex: Int = 0
     @State private var hoverTask: Task<Void, Never>?
@@ -107,6 +110,12 @@ struct ContentView: View {
             items.append(.notification(notification))
         }
 
+        // The Focus stopwatch was started on purpose, so it sits in front
+        // of music; music stays one swipe away.
+        if showsFocusActivity {
+            items.append(.focus)
+        }
+
         let musicIsShowing = (!coordinator.expandingView.show || coordinator.expandingView.type == .music)
             && (musicManager.isPlaying || !musicManager.isPlayerIdle)
             && coordinator.musicLiveActivityEnabled
@@ -118,6 +127,10 @@ struct ContentView: View {
         }
 
         return items
+    }
+
+    private var showsFocusActivity: Bool {
+        focusEnabled && focusShowInClosedNotch && stopwatch.isActive
     }
 
     /// A notification is a glance, not a workspace — it doesn't need the full
@@ -204,6 +217,8 @@ struct ContentView: View {
             switch activity {
             case .notification:
                 chinWidth += (2 * max(0, vm.effectiveClosedNotchHeight - 12) + 20)
+            case .focus:
+                chinWidth += (2 * FocusLiveActivity.sideWidth + 20 + 2 * liveActivityEdgeMargin + 2)
             case .music:
                 chinWidth += (2 * max(0, displayClosedNotchHeight - 12) + 20 + 2 * liveActivityEdgeMargin + 2)
                 // The inline song-change peek widens the pill itself, so the
@@ -346,6 +361,11 @@ struct ContentView: View {
                     .onChange(of: liveActivities.count) { _, count in
                         if activityIndex >= count { activityIndex = max(count - 1, 0) }
                     }
+                    // Starting the stopwatch brings its pill to the front,
+                    // even if the user had swiped away to music.
+                    .onChange(of: stopwatch.isActive) { _, active in
+                        if active { activityIndex = 0 }
+                    }
                     .onChange(of: vm.isPopoverActive) { _, _ in
                         scheduleCloseIfNotHovering(overNotch: vm)
                     }
@@ -383,6 +403,11 @@ struct ContentView: View {
         .background(dragDetector)
         .preferredColorScheme(.dark)
         .environmentObject(vm)
+        .onChange(of: focusEnabled) { _, enabled in
+            if !enabled && coordinator.currentView == .focus {
+                coordinator.currentView = .home
+            }
+        }
         .onChange(of: dropInteraction.anyDropZoneTargeting) { _, isTargeted in
             anyDropDebounceTask?.cancel()
 
@@ -451,6 +476,8 @@ struct ContentView: View {
                               switch item {
                               case .notification(let notification):
                                   NotificationLiveActivity(notification: notification)
+                              case .focus:
+                                  FocusLiveActivity()
                               case .music:
                                   MusicLiveActivity()
                                       .frame(alignment: .center)
@@ -556,6 +583,8 @@ struct ContentView: View {
                                 dropInteraction: vm.dropInteraction,
                                 animation: vm.animation
                             )
+                        case .focus:
+                            FocusTabView()
                         }
                     }
                 }
@@ -789,9 +818,15 @@ struct ContentView: View {
 extension ContentView {
     @discardableResult
     private func doOpen() -> Bool {
+        // Opening from the Focus pill lands on the Focus tab: that's what
+        // the user was looking at.
+        let opensOnFocus = focusEnabled && vm.notchState == .closed && selectedActivity == .focus
         var didOpen = false
         withAnimation(animationSpring) {
             didOpen = vm.open()
+        }
+        if didOpen && opensOnFocus {
+            coordinator.currentView = .focus
         }
         return didOpen
     }
