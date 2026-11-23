@@ -4308,6 +4308,16 @@
         }
       }
     },
+    "Both" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrambi"
+          }
+        }
+      }
+    },
     "Brightness" : {
       "localizations" : {
         "de" : {
@@ -18562,26 +18572,6 @@
         }
       }
     },
-    "Microphone off" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Microfono disattivato"
-          }
-        }
-      }
-    },
-    "Microphone on" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Microfono attivo"
-          }
-        }
-      }
-    },
     "Mirror" : {
       "comment" : "Camera mirror placeholder title",
       "localizations" : {
@@ -22419,16 +22409,6 @@
         }
       }
     },
-    "Pause recording" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Metti in pausa la registrazione"
-          }
-        }
-      }
-    },
     "Paused" : {
       "comment" : "Camera interrupted placeholder title",
       "localizations" : {
@@ -24014,22 +23994,22 @@
         }
       }
     },
+    "Record" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra"
+          }
+        }
+      }
+    },
     "Record the microphone" : {
       "localizations" : {
         "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Registra il microfono"
-          }
-        }
-      }
-    },
-    "Record the webcam" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Registra la webcam"
           }
         }
       }
@@ -25808,12 +25788,12 @@
         }
       }
     },
-    "Resume recording" : {
+    "Resume" : {
       "localizations" : {
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riprendi la registrazione"
+            "value" : "Riprendi"
           }
         }
       }
@@ -25930,16 +25910,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schermo"
-          }
-        }
-      }
-    },
-    "Screen + webcam" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schermo + webcam"
           }
         }
       }
@@ -33049,32 +33019,12 @@
         }
       }
     },
-    "Webcam and voice" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Webcam e voce"
-          }
-        }
-      }
-    },
     "Webcam bubble" : {
       "localizations" : {
         "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bolla webcam"
-          }
-        }
-      }
-    },
-    "Webcam only" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo webcam"
           }
         }
       }
@@ -33939,6 +33889,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Данные о напоминаниях используются только для отображения и никогда не передаются."
+          }
+        }
+      }
+    },
+    "Your voice is recorded. Click to mute." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua voce viene registrata. Fai clic per disattivare il microfono."
+          }
+        }
+      }
+    },
+    "Your voice isn't recorded. Click to turn the microphone on." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua voce non viene registrata. Fai clic per attivare il microfono."
           }
         }
       }

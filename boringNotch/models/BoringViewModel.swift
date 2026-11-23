@@ -172,10 +172,18 @@ final class BoringViewModel: NSObject, ObservableObject {
         return false
     }
 
+    /// - Parameter preferredView: the section to show, e.g. the one matching
+    ///   the closed-notch pill that was in front. Nil picks it from what's
+    ///   going on: Focus while the stopwatch or a recording runs, else Home.
+    ///   The shelf only opens when a file is dragged in; those callers
+    ///   switch to it after opening.
     @discardableResult
-    func open() -> Bool {
+    func open(preferring preferredView: NotchViews? = nil) -> Bool {
         guard !coordinator.firstLaunch, notchState != .open else { return false }
 
+        if !coordinator.openLastTabByDefault {
+            coordinator.currentView = preferredView ?? Self.defaultView()
+        }
         self.notchSize = openNotchSize
         self.notchState = .open
 
@@ -183,6 +191,11 @@ final class BoringViewModel: NSObject, ObservableObject {
         MusicManager.shared.forceUpdate()
 
         return true
+    }
+
+    private static func defaultView() -> NotchViews {
+        let focusIsRunning = StopwatchManager.shared.isActive || RecordingManager.shared.isBusy
+        return Defaults[.focusEnabled] && focusIsRunning ? .focus : .home
     }
 
     func close() {

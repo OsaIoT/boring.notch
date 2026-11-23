@@ -19,18 +19,26 @@ struct RecordingCard: View {
 
     static let width: CGFloat = 236
 
-    private var recordsScreen: Bool { recordScreen && RecordingManager.canRecordScreen }
-
-    /// The recording in progress, or the one the toggles describe.
+    /// The recording in progress, or the one the mode picker describes.
     private var displayedSource: RecordingSource {
         if recorder.isBusy, let active = recorder.activeSource {
             return active
         }
-        return RecordingSource(camera: recordCamera, screen: recordsScreen) ?? .camera
+        return RecordingSource(camera: recordCamera, screen: recordScreen && RecordingManager.canRecordScreen) ?? .camera
+    }
+
+    private var modeBinding: Binding<RecordingSource> {
+        Binding(
+            get: { displayedSource },
+            set: { source in
+                recordCamera = source.usesCamera
+                recordScreen = source.usesScreen
+            }
+        )
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 7) {
             HStack(alignment: .center, spacing: 10) {
                 preview
                 VStack(alignment: .leading, spacing: 6) {
@@ -38,14 +46,18 @@ struct RecordingCard: View {
                         recordButton
                         status
                     }
-                    secondaryControls
+                    secondaryControl
                 }
                 Spacer(minLength: 0)
+            }
+            if RecordingManager.canRecordScreen {
+                RecordingModePicker(selection: modeBinding)
+                    .disabled(recorder.isBusy)
             }
             footer
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.vertical, 9)
         .frame(width: Self.width, alignment: .leading)
         .frame(maxHeight: .infinity, alignment: .topLeading)
         .background(
@@ -64,20 +76,12 @@ struct RecordingCard: View {
                 HostedLayerView(hostedLayer: previewLayer)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             } else {
-                Image(systemName: placeholderSymbol)
+                Image(systemName: displayedSource.symbol)
                     .font(.system(size: 18))
                     .foregroundStyle(.gray)
             }
         }
-        .frame(width: 76, height: 57)
-    }
-
-    private var placeholderSymbol: String {
-        switch displayedSource {
-        case .camera: "web.camera"
-        case .screen: "display"
-        case .screenAndCamera: "pip"
-        }
+        .frame(width: 72, height: 54)
     }
 
     private var recordButton: some View {
@@ -120,26 +124,22 @@ struct RecordingCard: View {
         case .failed:
             statusLabel(Text("Not recorded"), systemImage: "exclamationmark.triangle.fill", color: .orange)
         case .idle:
-            statusLabel(sourceName, color: .gray)
+            statusLabel(Text("Record"), color: .white)
         }
     }
 
-    private var sourceName: Text {
-        switch displayedSource {
-        case .camera: Text("Webcam")
-        case .screen: Text("Screen")
-        case .screenAndCamera: Text("Screen + webcam")
-        }
-    }
-
+    /// Microphone switch before recording; pause during webcam recordings.
     @ViewBuilder
-    private var secondaryControls: some View {
+    private var secondaryControl: some View {
         if recorder.isRecording {
             if recorder.canPause {
-                HoverButton(icon: recorder.phase == .paused ? "play.fill" : "pause.fill", iconColor: .white) {
+                PillButton(
+                    symbol: recorder.phase == .paused ? "play.fill" : "pause.fill",
+                    title: recorder.phase == .paused ? Text("Resume") : Text("Pause"),
+                    isOn: true
+                ) {
                     recorder.togglePause()
                 }
-                .help(recorder.phase == .paused ? Text("Resume recording") : Text("Pause recording"))
             } else {
                 Text("Screen recordings can't be paused.")
                     .font(.system(size: 10))
@@ -147,29 +147,15 @@ struct RecordingCard: View {
                     .lineLimit(2)
             }
         } else {
-            HStack(spacing: 4) {
-                SourceToggle(symbol: "web.camera", isOn: recordCamera, help: Text("Webcam")) {
-                    recordCamera.toggle()
-                }
-                // At least one of webcam and screen stays on.
-                .disabled(recorder.isBusy || (recordCamera && !recordsScreen))
-
-                if RecordingManager.canRecordScreen {
-                    SourceToggle(symbol: "display", isOn: recordScreen, help: Text("Screen")) {
-                        recordScreen.toggle()
-                    }
-                    .disabled(recorder.isBusy || (recordScreen && !recordCamera))
-                }
-
-                SourceToggle(
-                    symbol: includeMicrophone ? "mic.fill" : "mic.slash.fill",
-                    isOn: includeMicrophone,
-                    help: includeMicrophone ? Text("Microphone on") : Text("Microphone off")
-                ) {
-                    includeMicrophone.toggle()
-                }
-                .disabled(recorder.isBusy)
+            PillButton(
+                symbol: includeMicrophone ? "mic.fill" : "mic.slash.fill",
+                title: includeMicrophone ? Text("Microphone") : Text("Muted"),
+                isOn: includeMicrophone
+            ) {
+                includeMicrophone.toggle()
             }
+            .disabled(recorder.isBusy)
+            .help(includeMicrophone ? Text("Your voice is recorded. Click to mute.") : Text("Your voice isn't recorded. Click to turn the microphone on."))
         }
     }
 
@@ -272,29 +258,83 @@ struct RecordingCard: View {
     }
 }
 
-/// A small on/off button for one recording source.
-private struct SourceToggle: View {
+private extension RecordingSource {
+    var symbol: String {
+        switch self {
+        case .camera: "web.camera"
+        case .screen: "display"
+        case .screenAndCamera: "pip"
+        }
+    }
+}
+
+/// Webcam | Screen | Both: one choice, spelled out.
+private struct RecordingModePicker: View {
+    @Binding var selection: RecordingSource
+
+    @Environment(\.isEnabled) var isEnabled
+
+    var body: some View {
+        HStack(spacing: 2) {
+            segment(.camera, title: Text("Webcam"))
+            segment(.screen, title: Text("Screen"))
+            segment(.screenAndCamera, title: Text("Both"))
+        }
+        .padding(2)
+        .background(Capsule().fill(Color.white.opacity(0.06)))
+        .opacity(isEnabled ? 1 : 0.6)
+    }
+
+    private func segment(_ source: RecordingSource, title: Text) -> some View {
+        let isSelected = selection == source
+        return Button {
+            withAnimation(.smooth(duration: 0.2)) {
+                selection = source
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: source.symbol)
+                    .font(.system(size: 10, weight: .semibold))
+                title
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(isSelected ? Color.white : Color.gray)
+            .frame(maxWidth: .infinity)
+            .frame(height: 22)
+            .background(Capsule().fill(isSelected ? Color.white.opacity(0.18) : Color.clear))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// A small labelled switch, clearer than a bare icon.
+private struct PillButton: View {
     let symbol: String
+    let title: Text
     let isOn: Bool
-    let help: Text
     let action: () -> Void
 
     @Environment(\.isEnabled) var isEnabled
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: symbol)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(isOn ? Color.white : Color.gray)
-                .frame(width: 28, height: 24)
-                .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(Color.white.opacity(isOn ? 0.18 : 0.05))
-                )
-                .contentShape(Rectangle())
+            HStack(spacing: 4) {
+                Image(systemName: symbol)
+                    .font(.system(size: 10, weight: .semibold))
+                title
+                    .lineLimit(1)
+            }
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(isOn ? Color.white : Color.gray)
+            .padding(.horizontal, 8)
+            .frame(height: 22)
+            .background(Capsule().fill(Color.white.opacity(isOn ? 0.16 : 0.06)))
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .opacity(isEnabled ? 1 : 0.55)
-        .help(help)
+        .opacity(isEnabled ? 1 : 0.6)
     }
 }

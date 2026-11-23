@@ -824,15 +824,18 @@ struct ContentView: View {
 extension ContentView {
     @discardableResult
     private func doOpen() -> Bool {
-        // Opening from the Focus pill lands on the Focus tab: that's what
-        // the user was looking at.
-        let opensOnFocus = focusEnabled && vm.notchState == .closed && selectedActivity == .focus
+        // The pill in front of the closed notch is what the user is looking
+        // at: open on its section. Swiping to music while the stopwatch runs
+        // therefore opens Home.
+        let preferred: NotchViews?
+        switch selectedActivity {
+        case .focus where focusEnabled: preferred = .focus
+        case .music: preferred = .home
+        default: preferred = nil
+        }
         var didOpen = false
         withAnimation(animationSpring) {
-            didOpen = vm.open()
-        }
-        if didOpen && opensOnFocus {
-            coordinator.currentView = .focus
+            didOpen = vm.open(preferring: preferred)
         }
         return didOpen
     }

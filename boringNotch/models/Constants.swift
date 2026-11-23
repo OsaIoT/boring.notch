@@ -553,7 +553,9 @@ extension Defaults.Keys {
     static let focusRecordingQuality = Key<RecordingQuality>("focusRecordingQuality", default: .hd1080)
     /// Security-scoped bookmark of a folder picked in Settings; nil means ~/Movies/Boring Notch.
     static let focusRecordingFolderBookmark = Key<Data?>("focusRecordingFolderBookmark", default: nil)
-    static let focusAddRecordingsToShelf = Key<Bool>("focusAddRecordingsToShelf", default: true)
+    /// Off by default: the shelf is for files being dragged around, and the
+    /// Focus tab already links to the last video.
+    static let focusAddRecordingsToShelf = Key<Bool>("focusAddRecordingsToShelf", default: false)
     static let focusOpenRecordingWhenDone = Key<Bool>("focusOpenRecordingWhenDone", default: false)
     static let focusRecordCamera = Key<Bool>("focusRecordCamera", default: true)
     static let focusRecordScreen = Key<Bool>("focusRecordScreen", default: false)
