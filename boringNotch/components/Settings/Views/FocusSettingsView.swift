@@ -13,6 +13,8 @@ struct FocusSettingsView: View {
     @Default(.focusTargetPresets) private var storedPresets
 
     private static let difficultyNames: [LocalizedStringKey] = ["Easy", "Medium", "Hard"]
+    /// Minutes a target can be set to.
+    private static let presetRange = 1...300
 
     var body: some View {
         Form {
@@ -31,14 +33,23 @@ struct FocusSettingsView: View {
 
             Section {
                 ForEach(Self.difficultyNames.indices, id: \.self) { index in
-                    Stepper(value: presetBinding(index), in: 5...180, step: 5) {
-                        HStack {
-                            Text(Self.difficultyNames[index])
-                            Spacer()
-                            Text("\(presets[index]) min")
-                                .monospacedDigit()
+                    LabeledContent {
+                        HStack(spacing: 6) {
+                            TextField(value: presetBinding(index), format: .number) {
+                                Text(Self.difficultyNames[index])
+                            }
+                            .labelsHidden()
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 56)
+                            Text("min")
                                 .foregroundStyle(.secondary)
+                            Stepper(value: presetBinding(index), in: Self.presetRange, step: 5) {
+                                Text(Self.difficultyNames[index])
+                            }
+                            .labelsHidden()
                         }
+                    } label: {
+                        Text(Self.difficultyNames[index])
                     }
                 }
                 Defaults.Toggle(key: .focusTargetSound) {
@@ -47,7 +58,7 @@ struct FocusSettingsView: View {
             } header: {
                 Text("Target times")
             } footer: {
-                HelpText("The time turns orange at 80% of the target and red once you go over it. The stopwatch keeps counting.")
+                HelpText("Type the minutes or use the arrows: these are the E, M and H buttons in the Focus tab. The time turns orange at 80% of the target and red once you go over it, and the stopwatch keeps counting.")
             }
 
             Section {
@@ -70,9 +81,16 @@ struct FocusSettingsView: View {
         Binding(
             get: { presets[index] },
             set: { newValue in
+                let clamped = min(max(newValue, Self.presetRange.lowerBound), Self.presetRange.upperBound)
+                let previous = presets[index]
                 var updated = presets
-                updated[index] = newValue
+                updated[index] = clamped
                 storedPresets = updated
+                // A session already using this preset follows the new value.
+                let stopwatch = StopwatchManager.shared
+                if stopwatch.state.target == TimeInterval(previous * 60) {
+                    stopwatch.setTarget(minutes: clamped)
+                }
             }
         )
     }

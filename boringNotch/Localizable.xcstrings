@@ -29895,16 +29895,6 @@
         }
       }
     },
-    "The time turns orange at 80% of the target and red once you go over it. The stopwatch keeps counting." : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tempo diventa arancione all'80% dell'obiettivo e rosso quando lo superi. Il cronometro continua a contare."
-          }
-        }
-      }
-    },
     "Time to Full Charge: %@" : {
       "localizations" : {
         "de" : {
@@ -30645,6 +30635,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "鼠標懸停在劉海上時，雙指上滑關閉劉海，下滑開啟劉海"
+          }
+        }
+      }
+    },
+    "Type the minutes or use the arrows: these are the E, M and H buttons in the Focus tab. The time turns orange at 80% of the target and red once you go over it, and the stopwatch keeps counting." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi i minuti o usa le frecce: sono i pulsanti E, M e H del tab Focus. Il tempo diventa arancione all'80% dell'obiettivo e rosso quando lo superi, e il cronometro continua a contare."
           }
         }
       }
