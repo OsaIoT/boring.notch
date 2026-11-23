@@ -18,6 +18,21 @@ struct AudioInputDevice: Identifiable, Equatable, Sendable {
     let name: String
 }
 
+/// Bit rate for webcam recordings. A person talking in front of a still
+/// background compresses far better than the general-purpose presets
+/// assume: about 4.5 Mbit/s for 1080p HEVC (≈2 GB an hour instead of ≈4)
+/// still looks the same. Scaled by resolution, so 720p gets about 2 Mbit/s;
+/// H.264 needs about 60% more for the same quality.
+enum WebcamBitRate {
+    static let hevcBitsPerPixel = 0.072
+    static let h264Factor = 1.6
+
+    static func average(width: Int, height: Int, isHEVC: Bool, framesPerSecond: Double = 30) -> Int {
+        let hevc = Double(width * height) * framesPerSecond * hevcBitsPerPixel
+        return Int((isHEVC ? hevc : hevc * h264Factor).rounded())
+    }
+}
+
 extension RecordingQuality {
     var sessionPreset: AVCaptureSession.Preset {
         switch self {
@@ -210,20 +225,27 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         }
     }
 
-    /// HEVC when the Mac can encode it (about half the size of H.264 for an
-    /// hour of webcam), at the camera's actual resolution. The settings come
+    /// HEVC when the Mac can encode it, at the camera's actual resolution and
+    /// a bit rate sized for a webcam (see WebcamBitRate). The settings start
     /// from AVOutputSettingsAssistant, which returns nil instead of a
     /// dictionary the encoder would reject.
     private func applyVideoSettings(for camera: AVCaptureDevice) {
         guard let connection = output.connection(with: .video) else { return }
-        let assistant = AVOutputSettingsAssistant(preset: .hevc1920x1080)
-            ?? AVOutputSettingsAssistant(preset: .preset1920x1080)
+        let hevcAssistant = AVOutputSettingsAssistant(preset: .hevc1920x1080)
+        let assistant = hevcAssistant ?? AVOutputSettingsAssistant(preset: .preset1920x1080)
         guard var settings = assistant?.videoSettings else { return }
         let dimensions = CMVideoFormatDescriptionGetDimensions(camera.activeFormat.formatDescription)
-        if dimensions.width > 0, dimensions.height > 0 {
-            settings[AVVideoWidthKey] = Int(dimensions.width)
-            settings[AVVideoHeightKey] = Int(dimensions.height)
-        }
+        let width = dimensions.width > 0 ? Int(dimensions.width) : 1920
+        let height = dimensions.height > 0 ? Int(dimensions.height) : 1080
+        settings[AVVideoWidthKey] = width
+        settings[AVVideoHeightKey] = height
+        var compression = settings[AVVideoCompressionPropertiesKey] as? [String: Any] ?? [:]
+        compression[AVVideoAverageBitRateKey] = WebcamBitRate.average(
+            width: width,
+            height: height,
+            isHEVC: hevcAssistant != nil
+        )
+        settings[AVVideoCompressionPropertiesKey] = compression
         output.setOutputSettings(settings, for: connection)
     }
 
