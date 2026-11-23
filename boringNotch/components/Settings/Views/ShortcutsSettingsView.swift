@@ -20,6 +20,7 @@ struct ShortcutsSettingsView: View {
                 KeyboardShortcuts.Recorder("Start or pause the stopwatch:", name: .focusToggleStopwatch)
                 KeyboardShortcuts.Recorder("Add a marker:", name: .focusAddMarker)
                 KeyboardShortcuts.Recorder("Reset the stopwatch:", name: .focusResetStopwatch)
+                KeyboardShortcuts.Recorder("Start or stop recording:", name: .focusToggleRecording)
             } header: {
                 Text("Focus")
             }

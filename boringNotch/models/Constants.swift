@@ -544,6 +544,18 @@ extension Defaults.Keys {
     static let focusTargetPresets = Key<[Int]>("focusTargetPresets", default: StopwatchState.defaultTargetPresets)
     static let focusStopwatchState = Key<StopwatchState>("focusStopwatchState", default: StopwatchState())
 
+    // MARK: Focus (recording)
+    static let focusRecordMicrophone = Key<Bool>("focusRecordMicrophone", default: true)
+    /// Nil picks the camera automatically (built-in first).
+    static let focusCameraID = Key<String?>("focusCameraID", default: nil)
+    /// Nil uses the system's default input.
+    static let focusMicrophoneID = Key<String?>("focusMicrophoneID", default: nil)
+    static let focusRecordingQuality = Key<RecordingQuality>("focusRecordingQuality", default: .hd1080)
+    /// Security-scoped bookmark of a folder picked in Settings; nil means ~/Movies/Boring Notch.
+    static let focusRecordingFolderBookmark = Key<Data?>("focusRecordingFolderBookmark", default: nil)
+    static let focusAddRecordingsToShelf = Key<Bool>("focusAddRecordingsToShelf", default: true)
+    static let focusOpenRecordingWhenDone = Key<Bool>("focusOpenRecordingWhenDone", default: false)
+
     // MARK: Calendar
     static let calendarSelectionState = Key<CalendarSelectionState>("calendarSelectionState", default: .all)
     static let hideAllDayEvents = Key<Bool>("hideAllDayEvents", default: false)

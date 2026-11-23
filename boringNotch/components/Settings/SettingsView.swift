@@ -97,7 +97,7 @@ struct SettingsView: View {
                 case .general:
                     GeneralSettings()
                 case .focus:
-                    FocusSettingsView()
+                    FocusSettingsView(camera: camera)
                 case .notch:
                     NotchSettingsView()
                 case .appearance:

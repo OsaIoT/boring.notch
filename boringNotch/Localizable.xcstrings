@@ -1215,6 +1215,16 @@
         }
       }
     },
+    "Add finished videos to the Shelf" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi i video finiti allo Shelf"
+          }
+        }
+      }
+    },
     "Add manually" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2546,6 +2556,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自動"
+          }
+        }
+      }
+    },
+    "Automatic uses the Mac's built-in camera first, so an iPhone nearby isn't picked by mistake." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatica usa prima la camera integrata del Mac, così non viene scelto per sbaglio un iPhone vicino."
           }
         }
       }
@@ -4944,6 +4964,16 @@
         }
       }
     },
+    "Camera access is off." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'accesso alla camera è disattivato."
+          }
+        }
+      }
+    },
     "Camera Access Required" : {
       "comment" : "Camera permission alert title",
       "localizations" : {
@@ -5236,6 +5266,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用左右滑動切換媒體內容"
+          }
+        }
+      }
+    },
+    "Change…" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia…"
           }
         }
       }
@@ -5952,6 +5992,16 @@
         }
       }
     },
+    "Choose" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli"
+          }
+        }
+      }
+    },
     "Choose a Music Source" : {
       "localizations" : {
         "cs" : {
@@ -6469,6 +6519,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Takvimin çentikte nasıl görüntüleneceğini seç."
+          }
+        }
+      }
+    },
+    "Choose where Focus recordings are saved." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli dove salvare le registrazioni Focus."
           }
         }
       }
@@ -10443,6 +10503,16 @@
         }
       }
     },
+    "Duration: %@" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durata: %@"
+          }
+        }
+      }
+    },
     "e.g., 1920" : {
       "localizations" : {
         "es" : {
@@ -12319,6 +12389,16 @@
         }
       }
     },
+    "Film yourself while you think out loud." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filmati mentre ragioni ad alta voce."
+          }
+        }
+      }
+    },
     "Finish" : {
       "localizations" : {
         "cs" : {
@@ -12502,6 +12582,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Videoyu çevir"
+          }
+        }
+      }
+    },
+    "Folder" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartella"
           }
         }
       }
@@ -14893,6 +14983,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Boşta"
+          }
+        }
+      }
+    },
+    "If you add markers while recording, a .md file with their times in the video is saved next to it." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se aggiungi dei marker mentre registri, accanto al video trovi un file .md con i loro tempi nel video."
           }
         }
       }
@@ -18392,6 +18492,46 @@
         }
       }
     },
+    "Microphone" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Microfono"
+          }
+        }
+      }
+    },
+    "Microphone access is off." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'accesso al microfono è disattivato."
+          }
+        }
+      }
+    },
+    "Microphone off" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Microfono disattivato"
+          }
+        }
+      }
+    },
+    "Microphone on" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Microfono attivo"
+          }
+        }
+      }
+    },
     "Mirror" : {
       "comment" : "Camera mirror placeholder title",
       "localizations" : {
@@ -19324,6 +19464,16 @@
         }
       }
     },
+    "No camera found." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna camera trovata."
+          }
+        }
+      }
+    },
     "No Compatible Apps Found" : {
       "comment" : "Context menu item: No Compatible Apps Found",
       "localizations" : {
@@ -19983,6 +20133,16 @@
         }
       }
     },
+    "Not recorded" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non registrato"
+          }
+        }
+      }
+    },
     "Notch" : {
       "localizations" : {
         "en" : {
@@ -20371,6 +20531,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "劉海屏劉海高度"
+          }
+        }
+      }
+    },
+    "Nothing is being recorded." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non c'è nessuna registrazione in corso."
           }
         }
       }
@@ -21656,6 +21826,26 @@
         }
       }
     },
+    "Open the video" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri il video"
+          }
+        }
+      }
+    },
+    "Open the video when the recording ends" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri il video alla fine della registrazione"
+          }
+        }
+      }
+    },
     "Open With" : {
       "comment" : "Context menu item: Open With",
       "localizations" : {
@@ -22175,6 +22365,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Duraklat"
+          }
+        }
+      }
+    },
+    "Pause recording" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metti in pausa la registrazione"
           }
         }
       }
@@ -23071,6 +23271,16 @@
         }
       }
     },
+    "Quality" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualità"
+          }
+        }
+      }
+    },
     "Quick Look" : {
       "comment" : "Context menu item: Quick Look",
       "localizations" : {
@@ -23750,6 +23960,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Önerilen Uygulamalar"
+          }
+        }
+      }
+    },
+    "Record the microphone" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra il microfono"
+          }
+        }
+      }
+    },
+    "Record the webcam" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registra la webcam"
+          }
+        }
+      }
+    },
+    "Recording" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrazione"
           }
         }
       }
@@ -25498,6 +25738,46 @@
         }
       }
     },
+    "Resume recording" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riprendi la registrazione"
+          }
+        }
+      }
+    },
+    "Saved" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvato"
+          }
+        }
+      }
+    },
+    "Saving" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvataggio"
+          }
+        }
+      }
+    },
+    "Saving…" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvataggio…"
+          }
+        }
+      }
+    },
     "Scale corner radius for closed notch" : {
       "localizations" : {
         "de" : {
@@ -25570,6 +25850,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隱藏劉海模式下圓角自適應縮放"
+          }
+        }
+      }
+    },
+    "Screen" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermo"
+          }
+        }
+      }
+    },
+    "Screen+Webcam" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schermo+Webcam"
           }
         }
       }
@@ -29569,6 +29869,36 @@
         }
       }
     },
+    "Start or stop recording:" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvia o ferma la registrazione:"
+          }
+        }
+      }
+    },
+    "Starting…" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvio…"
+          }
+        }
+      }
+    },
+    "Stop recording" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ferma la registrazione"
+          }
+        }
+      }
+    },
     "Stopwatch" : {
       "localizations" : {
         "it" : {
@@ -29891,6 +30221,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arka planda çalışan yardımcı süreç kapandı ya da macOS tarafından sonlandırıldı. Sıradaki OSD olayında kendiliğinden yeniden başlayacaktır."
+          }
+        }
+      }
+    },
+    "The camera can't be used right now." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al momento la camera non è utilizzabile."
+          }
+        }
+      }
+    },
+    "The recording stopped unexpectedly." : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La registrazione si è interrotta all'improvviso."
           }
         }
       }
@@ -32545,6 +32895,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "音量源"
+          }
+        }
+      }
+    },
+    "Webcam and voice" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webcam e voce"
+          }
+        }
+      }
+    },
+    "Webcam only" : {
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo webcam"
           }
         }
       }

@@ -16,4 +16,5 @@ extension KeyboardShortcuts.Name {
     static let focusToggleStopwatch = Self("focusToggleStopwatch", initial: .init(.t, modifiers: [.control, .option, .command]))
     static let focusAddMarker = Self("focusAddMarker", initial: .init(.m, modifiers: [.control, .option, .command]))
     static let focusResetStopwatch = Self("focusResetStopwatch")
+    static let focusToggleRecording = Self("focusToggleRecording", initial: .init(.r, modifiers: [.control, .option, .command]))
 }

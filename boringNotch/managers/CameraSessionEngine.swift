@@ -364,7 +364,7 @@ final class AVCaptureSessionEngine: NSObject, CameraSessionEngine {
         publish(.started(session: session, device: device), state: state)
     }
 
-    private static func discoveredDevices() -> [CameraDevice] {
+    static func discoveredDevices() -> [CameraDevice] {
         let discovery = AVCaptureDevice.DiscoverySession(
             deviceTypes: [.builtInWideAngleCamera, .continuityCamera, .deskViewCamera, .external],
             mediaType: .video,

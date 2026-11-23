@@ -15,14 +15,26 @@ struct FocusTabView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             StopwatchCard()
+            RecordingCard()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+}
+
+/// One marker action for whatever is running: the stopwatch gets a lap and
+/// the recording a timestamp in its notes file.
+@MainActor
+enum FocusMarker {
+    static func add() {
+        StopwatchManager.shared.addMarker()
+        RecordingManager.shared.addMarker()
     }
 }
 
 /// The time, start/pause, reset, markers and the target picker.
 struct StopwatchCard: View {
     @ObservedObject private var stopwatch = StopwatchManager.shared
+    @ObservedObject private var recorder = RecordingManager.shared
     @Default(.focusTargetPresets) private var storedPresets
 
     /// LeetCode difficulty initials, paired with the three presets.
@@ -54,10 +66,11 @@ struct StopwatchCard: View {
                 .disabled(!state.isActive)
                 .help(Text("Reset"))
 
-                HoverButton(icon: "flag.fill", iconColor: state.isActive ? .white : .gray) {
-                    stopwatch.addMarker()
+                let canMark = state.isActive || recorder.isRecording
+                HoverButton(icon: "flag.fill", iconColor: canMark ? .white : .gray) {
+                    FocusMarker.add()
                 }
-                .disabled(!state.isActive)
+                .disabled(!canMark)
                 .help(Text("Add marker"))
 
                 Spacer(minLength: 8)
@@ -69,7 +82,7 @@ struct StopwatchCard: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.white.opacity(0.06))

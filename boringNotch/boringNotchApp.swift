@@ -159,6 +159,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return false
     }
 
+    /// A movie file is only playable once it's finished, so a running Focus
+    /// recording is stopped and saved before the app quits.
+    @MainActor
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard RecordingManager.shared.isRecording else { return .terminateNow }
+        Task { @MainActor in
+            await RecordingManager.shared.finishBeforeQuitting()
+            NSApp.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         if LegacyAppBundleMigration.isRelaunching { return }
 
@@ -327,12 +339,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         KeyboardShortcuts.onKeyDown(for: .focusAddMarker) {
             guard Defaults[.focusEnabled] else { return }
-            StopwatchManager.shared.addMarker()
+            FocusMarker.add()
         }
         KeyboardShortcuts.onKeyDown(for: .focusResetStopwatch) {
             guard Defaults[.focusEnabled] else { return }
             StopwatchManager.shared.reset()
         }
+        KeyboardShortcuts.onKeyDown(for: .focusToggleRecording) {
+            guard Defaults[.focusEnabled] else { return }
+            RecordingManager.shared.toggle()
+        }
+        RecordingManager.shared.mirrorCamera = camera
 
         // Sync notch height with real value on app launch if mode is matchRealNotchSize
         syncNotchHeightIfNeeded()

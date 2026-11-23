@@ -23,6 +23,7 @@ struct ContentView: View {
     @ObservedObject var volumeManager = VolumeManager.shared
     @ObservedObject var notificationManager = SystemNotificationManager.shared
     @ObservedObject var stopwatch = StopwatchManager.shared
+    @ObservedObject var recording = RecordingManager.shared
     @Default(.focusEnabled) var focusEnabled
     @Default(.focusShowInClosedNotch) var focusShowInClosedNotch
     /// Which entry of the closed-notch activity stack is on top.
@@ -129,8 +130,10 @@ struct ContentView: View {
         return items
     }
 
+    /// A recording always shows its pill, whatever the stopwatch setting:
+    /// you should never be recorded without seeing it.
     private var showsFocusActivity: Bool {
-        focusEnabled && focusShowInClosedNotch && stopwatch.isActive
+        focusEnabled && ((focusShowInClosedNotch && stopwatch.isActive) || recording.showsInNotch)
     }
 
     /// A notification is a glance, not a workspace — it doesn't need the full
@@ -365,6 +368,9 @@ struct ContentView: View {
                     // even if the user had swiped away to music.
                     .onChange(of: stopwatch.isActive) { _, active in
                         if active { activityIndex = 0 }
+                    }
+                    .onChange(of: recording.isBusy) { _, busy in
+                        if busy { activityIndex = 0 }
                     }
                     .onChange(of: vm.isPopoverActive) { _, _ in
                         scheduleCloseIfNotHovering(overNotch: vm)

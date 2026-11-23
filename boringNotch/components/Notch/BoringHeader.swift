@@ -13,6 +13,7 @@ struct BoringHeader: View {
     @ObservedObject var batteryModel = BatteryStatusViewModel.shared
     @ObservedObject var coordinator = BoringViewCoordinator.shared
     @StateObject var shelfState = ShelfStateViewModel.shared
+    @ObservedObject var recording = RecordingManager.shared
     var body: some View {
         HStack(spacing: 0) {
             HStack {
@@ -47,7 +48,8 @@ struct BoringHeader: View {
                         )
                             .transition(.scale(scale: 0.8).combined(with: .opacity))
                     } else {
-                        if Defaults[.showMirror] && coordinator.currentView == .home {
+                        // The camera belongs to the recording while one runs.
+                        if Defaults[.showMirror] && coordinator.currentView == .home && !recording.usesCamera {
                             Button(action: {
                                 vm.toggleCameraPreview()
                             }) {
