@@ -13,7 +13,6 @@ import SwiftUI
 struct RecordingCard: View {
     @ObservedObject private var recorder = RecordingManager.shared
     @Default(.focusRecordMicrophone) private var includeMicrophone
-    @Default(.isMirrored) private var isMirrored
 
     static let width: CGFloat = 236
 
@@ -43,8 +42,8 @@ struct RecordingCard: View {
         ZStack {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(Color.white.opacity(0.06))
-            if let session = recorder.previewSession {
-                CameraPreviewLayerView(session: session, isMirrored: isMirrored)
+            if let previewLayer = recorder.previewLayer {
+                HostedLayerView(hostedLayer: previewLayer)
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             } else {
                 Image(systemName: "web.camera")

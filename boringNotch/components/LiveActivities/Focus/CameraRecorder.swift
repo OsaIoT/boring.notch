@@ -35,6 +35,8 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         var microphoneID: String?
         var includeMicrophone: Bool
         var quality: RecordingQuality
+        /// Mirrors the preview only; the recorded video is never flipped.
+        var mirrorPreview: Bool
     }
 
     enum RecorderError: LocalizedError {
@@ -51,8 +53,13 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         }
     }
 
-    /// Shared with previews. Configured and started on `queue` only.
-    let session = AVCaptureSession()
+    /// Configured and started on `queue` only.
+    let session: AVCaptureSession
+    /// The live preview, created up front: attaching a new preview layer to
+    /// a session that is already recording reconfigures it, and AVFoundation
+    /// then ends the movie file after a fraction of a second. Views only
+    /// host this layer.
+    let previewLayer: AVCaptureVideoPreviewLayer
 
     private let output = AVCaptureMovieFileOutput()
     private let queue = DispatchQueue(label: "BoringNotch.Focus.CameraRecorder", qos: .userInitiated)
@@ -66,6 +73,11 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
 
     init(onUnexpectedFinish: @escaping @Sendable (URL?, Error?) -> Void) {
         self.onUnexpectedFinish = onUnexpectedFinish
+        let session = AVCaptureSession()
+        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer.videoGravity = .resizeAspectFill
+        self.session = session
+        self.previewLayer = previewLayer
         super.init()
     }
 
@@ -151,6 +163,12 @@ final class CameraRecorder: NSObject, @unchecked Sendable {
         session.addOutput(output)
         session.commitConfiguration()
         applyVideoSettings(for: camera)
+        // Before recording starts, like everything else that touches the
+        // session's connections.
+        if let connection = previewLayer.connection, connection.isVideoMirroringSupported {
+            connection.automaticallyAdjustsVideoMirroring = false
+            connection.isVideoMirrored = configuration.mirrorPreview
+        }
     }
 
     /// HEVC when the Mac can encode it (about half the size of H.264 for an

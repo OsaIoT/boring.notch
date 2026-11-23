@@ -59,7 +59,8 @@ final class RecordingManager: ObservableObject {
     /// Whether the closed notch shows the recording pill (including the
     /// short "saved" / "failed" confirmations).
     var showsInNotch: Bool { phase != .idle }
-    var previewSession: AVCaptureSession? { isRecording ? cameraRecorder.session : nil }
+    /// The recorder's own preview layer, to host as-is (see CameraRecorder).
+    var previewLayer: AVCaptureVideoPreviewLayer? { isRecording ? cameraRecorder.previewLayer : nil }
 
     func toggle() {
         if isRecording {
@@ -143,7 +144,8 @@ final class RecordingManager: ObservableObject {
                 cameraID: Defaults[.focusCameraID],
                 microphoneID: Defaults[.focusMicrophoneID],
                 includeMicrophone: includeMicrophone,
-                quality: Defaults[.focusRecordingQuality]
+                quality: Defaults[.focusRecordingQuality],
+                mirrorPreview: Defaults[.isMirrored]
             )
             try await cameraRecorder.start(configuration, to: url)
             markers = []
@@ -172,6 +174,10 @@ final class RecordingManager: ObservableObject {
 
     private func recordingEndedUnexpectedly(url: URL?, error: Error?) {
         guard isRecording else { return }
+        let nsError = error as NSError?
+        Log.general.error(
+            "Focus recording ended on its own after \(self.clock.elapsed(at: Date()), privacy: .public)s: \(nsError?.domain ?? "no error", privacy: .public) \(nsError?.code ?? 0, privacy: .public) \(nsError?.localizedDescription ?? "", privacy: .public)"
+        )
         let duration = clock.elapsed(at: Date())
         clock.pause(at: Date())
         if let url {
