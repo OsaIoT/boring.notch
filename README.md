@@ -1,205 +1,166 @@
-<h1 align="center">
-  <br>
-  <a href="http://theboring.name"><img src="https://framerusercontent.com/images/RFK4vs0kn8pRMuOO58JeyoemXA.png?scale-down-to=256" alt="Boring Notch" width="150"></a>
-  <br>
-  Boring Notch
-  <br>
-</h1>
+# Boring Notch+
 
+**Your MacBook's notch, turned into a practice companion.**
 
-<p align="center">
-  <a title="Crowdin" target="_blank" href="https://crowdin.com/project/boring-notch"><img src="https://badges.crowdin.net/boring-notch/localized.svg"></a>
-  <img src="https://github.com/TheBoredTeam/boring.notch/actions/workflows/cicd.yml/badge.svg" alt="TheBoringNotch Build & Test" style="margin-right: 10px;" />
-  <a href="https://discord.gg/c8JXA7qrPm">
-    <img src="https://dcbadge.limes.pink/api/server/https://discord.gg/c8JXA7qrPm?style=flat" alt="Discord Badge" />
-  </a>
-  <a href="https://www.ko-fi.com/alexander5015">
-    <img src="https://srv-cdn.himpfen.io/badges/kofi/kofi-flat.svg" alt="Ko-Fi" />
-  </a>
-</p>
+Boring Notch+ is a fork of [boring.notch](https://github.com/TheBoredTeam/boring.notch) that adds a **Focus** tab: a stopwatch that lives in the notch, and one-click recording of your webcam, your screen, or both. Film yourself solving a problem out loud, then watch it back to see where you got stuck and how you got out.
 
-<p align="center">
-  <a href="https://trendshift.io/repositories/14815?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-14815" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/14815" alt="TheBoredTeam%2Fboring.notch |    Trendshift" width="250" height="55"/></a>
-</p>
-<!--Welcome to **Boring.Notch**, the coolest way to make your MacBook's notch the star of the show! Forget about those boring status bars—our notch turns into a dynamic music control center, complete with a snazzy visualizer and all the music controls you need. It's like having a mini concert right at the top of your screen! -->
+It was built for LeetCode-style practice and mock interviews, but it works for any focused session. Everything boring.notch already does (music controls, the file shelf, calendar, volume and brightness HUD, mirror) is still there.
 
-Say hello to **Boring Notch**, the coolest way to make your MacBook’s notch the star of the show! Say goodbye to boring status bars: with Boring Notch, your notch transforms into a dynamic music control center, complete with a vibrant visualizer and all the essential music controls you need. But that’s just the start! Boring Notch also offers calendar integration, a handy file shelf with sharing support, a complete MacOS OSD replacement and more!
+- [Features](#features)
+- [Keyboard shortcuts](#keyboard-shortcuts)
+- [Install](#install)
+- [First launch and permissions](#first-launch-and-permissions)
+- [Using it](#using-it)
+- [Privacy](#privacy)
+- [Differences from boring.notch](#differences-from-boringnotch)
+- [Updating](#updating)
+- [Troubleshooting](#troubleshooting)
+- [Credits and license](#credits-and-license)
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/2d5f69c1-6e7b-4bc2-a6f1-bb9e27cf88a8" alt="Demo GIF" />
-</p>
+## Features
 
-<!--https://github.com/user-attachments/assets/19b87973-4b3a-4853-b532-7e82d1d6b040-->
----
-<!--## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Roadmap](#-roadmap)
-- [Building from Source](#building-from-source)
-- [Contributing](#-contributing)
-- [Join our Discord Server](#join-our-discord-server)
-- [Star History](#star-history)
-- [Buy us a coffee!](#buy-us-a-coffee)
-- [Acknowledgments](#-acknowledgments)-->
+### A stopwatch in the notch
 
-## Installation
+- Start it and the elapsed time stays visible in the closed notch: an icon on the left of the camera, the time on the right.
+- Set a **target time**. The three presets (**E 20**, **M 35**, **H 50** minutes, for Easy, Medium and Hard) can be changed to anything from 1 to 300 minutes. The time turns orange at 80% of the target and red once you go over it. It keeps counting, and can play a sound when you reach the target.
+- Pause, reset, and drop **markers** to note key moments, each with its split time.
+- It survives quitting and relaunching the app.
+- It gets along with music: swipe sideways on the closed notch to switch between the stopwatch and what's playing.
 
-**System Requirements:**
-- macOS **14 Sonoma** or later
-- Apple Silicon or Intel Mac
+### Recording
 
----
+Pick **Webcam**, **Screen** or **Both** in the Focus tab and press record.
 
-### Option 1: Download and Install Manually
+| Mode | What you get |
+|---|---|
+| **Webcam** | Camera and microphone, 1080p HEVC (about 2 GB per hour). Can be paused. |
+| **Screen** | The screen under your pointer (or one you choose), with your voice. Mouse clicks are highlighted. Needs macOS 15. |
+| **Both** | The screen recording plus a round **webcam bubble** that floats on screen and ends up in the same video. Drag it anywhere: it remembers the spot. |
 
-<a href="https://github.com/TheBoredTeam/boring.notch/releases/latest/download/Boring%20Notch.dmg" target="_self"><img width="200" src="https://github.com/user-attachments/assets/e3179be1-8416-4b8a-b417-743e1ecc67d6" alt="Download for macOS" /></a>
+- While you record, a pulsing red dot and the recording time show in the closed notch, even if you turned the stopwatch display off.
+- Videos go to `~/Movies/Boring Notch` (you can pick another folder), named by date and mode, e.g. `2026-11-23 21.30 Webcam.mov`.
+- Markers added while recording are saved next to the video in a `.md` file with their timestamps.
+- Quitting the app during a recording finishes the file properly first.
 
-1. Open the downloaded `Boring Notch.dmg` file.
-2. Drag **Boring Notch** onto the **Applications** folder in the installer window.
-3. Wait for the copy to finish.
-4. Eject the Boring Notch disk image in Finder.
-5. Open **Boring Notch** from your **Applications** folder.
+### A smarter notch
 
-The installed app stays available after you eject the disk image. Opening the app inside the installer does not install it.
+Opening the notch lands on what you're doing: the **Focus** tab while the stopwatch or a recording runs, **Home** otherwise. The shelf only opens when you drag a file onto the notch.
 
-> [!IMPORTANT]
-> Release builds are not notarized with Apple (macOS will warn you that Boring Notch is from an unidentified developer on first launch). This is expected behavior.
->
-> You'll need to bypass this before the app will open. You only need to do this once. Use one of the methods below.
+## Keyboard shortcuts
 
----
+| Shortcut | Action |
+|---|---|
+| `⌃⌥⌘T` | Start or pause the stopwatch |
+| `⌃⌥⌘M` | Add a marker |
+| `⌃⌥⌘R` | Start or stop recording (in the mode selected in the Focus tab) |
+| none | Reset the stopwatch |
 
-#### Recommended: Terminal (Always Works)
+Change them in **Settings → Shortcuts** or **Settings → Focus**.
 
-This is the quickest and easiest method. It only requires a single command and works consistently for all users. System Settings can sometimes fail and won't work for non-admin users.
+## Install
 
-After moving Boring Notch to your Applications folder, run:
+**Requirements:** macOS 14 Sonoma or later, Apple Silicon or Intel. Screen recording needs macOS 15 Sequoia or later. A Mac with a notch looks best, but any Mac works.
 
-```bash
-xattr -dr com.apple.quarantine "/Applications/Boring Notch.app"
-```
+### Option 1: download (no Xcode needed)
 
-Then open the app normally.
+1. Download [**Boring-Notch-Plus.zip**](https://github.com/OsaIoT/boring.notch/releases/latest/download/Boring-Notch-Plus.zip) from the [latest release](https://github.com/OsaIoT/boring.notch/releases/latest).
+2. Unzip it and drag **Boring Notch+** into your **Applications** folder.
+3. The app isn't notarized by Apple, so macOS blocks it the first time. Run this once in Terminal:
 
----
-
-#### Alternative: System Settings
-
-> [!NOTE]
-> This method doesn't work for all users. If this doesn't work, use the Terminal method above.
-
-1. Try to open the app — you'll see a security warning.
-2. Click **OK** to dismiss it.
-3. Open **System Settings** > **Privacy & Security**.
-4. Scroll to the bottom and click **Open Anyway** next to the Boring Notch warning.
-5. Confirm if prompted.
-
----
-
-### Option 2: Install via Homebrew
-
-You can also install using [Homebrew](https://brew.sh). The Homebrew installation automatically bypasses the macOS security warning described above.
-
-```bash
-brew install --cask TheBoredTeam/boring-notch/boring-notch
-```
-
-## Usage
-
-- Launch the app, and voilà—your notch is now the coolest part of your screen.
-- Hover over the notch to see it expand and reveal all its secrets.
-- Use the controls to manage your music like a rockstar.
-- Click the star in your menu bar to customize your notch to your heart's content.
-
-## 📋 Roadmap
-- [x] Playback live activity 🎧
-- [x] Calendar integration 📆
-- [x] Reminders integration ☑️
-- [x] Mirror 📷
-- [x] Charging indicator and current percentage 🔋
-- [x] Customizable gesture control 👆🏻
-- [x] Shelf functionality with AirDrop 📚
-- [x] Notch sizing customization, finetuning on different display sizes 🖥️
-- [x] System OSD replacements (volume, brightness, backlight) 🎚️💡⌨️
-- [ ] Bluetooth Live Activity (connect/disconnect for bluetooth devices) 
-- [ ] Weather integration ⛅️
-- [ ] Customizable Layout options 🛠️
-- [ ] Lock Screen Widgets 🔒
-- [ ] Extension system 🧩
-- [ ] Notifications (under consideration) 🔔
-<!-- - [ ] Clipboard history manager 📌 `Extension` -->
-<!-- - [ ] Download indicator of different browsers (Safari, Chromium browsers, Firefox) 🌍 `Extension`-->
-<!-- - [ ] Customizable function buttons 🎛️ -->
-<!-- - [ ] App switcher 🪄 -->
-
-<!-- ## 🧩 Extensions
-> [!NOTE]
-> We’re hard at work on some awesome extensions! Stay tuned, and we’ll keep you updated as soon as they’re released. -->
-
-## Building from Source
-
-### Prerequisites
-
-- **macOS 15.6 or later**
-- **Xcode 26 or later**
-
-### Installation
-
-1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/TheBoredTeam/boring.notch.git
+   xattr -dr com.apple.quarantine "/Applications/Boring Notch+.app"
+   ```
+
+   Or try to open the app, dismiss the warning, then go to **System Settings → Privacy & Security** and click **Open Anyway**.
+4. Open **Boring Notch+** from Applications.
+
+### Option 2: build from source
+
+Building needs **macOS 15.6** or later and **Xcode 26** or later.
+
+1. Install Xcode from the App Store and open it once, so it installs its components.
+2. Recommended: create a free signing certificate. In Xcode, go to **Settings → Apple Accounts**, add your Apple ID, select your *(Personal Team)*, then **Manage Certificates… → + → Apple Development**. With a certificate, macOS keeps the camera, microphone and screen permissions when you update the app. Without one the app still works, but asks again after every rebuild.
+3. Clone and install:
+
+   ```bash
+   git clone https://github.com/OsaIoT/boring.notch.git
    cd boring.notch
+   ./scripts/install.sh
    ```
 
-2. **Open the Project in Xcode**:
-   ```bash
-   open boringNotch.xcodeproj
-   ```
+   The script builds a Release version, installs it as `/Applications/Boring Notch+.app` and opens it. It picks your certificate automatically; set `TEAM_ID=...` to choose a specific team.
 
-3. **Build and Run**:
-    - Click the "Run" button or press `Cmd + R`. Watch the magic unfold!
+Prefer Xcode? Open `boringNotch.xcodeproj`, select the **boringNotch** target, choose your team under **Signing & Capabilities**, and press Run.
 
-## 🤝 Contributing
+## First launch and permissions
 
-We’re all about good vibes and awesome contributions! Read [CONTRIBUTING.md](CONTRIBUTING.md) to learn how you can join the fun!
+- The boring.notch onboarding walks you through its own permissions (music, calendar and so on).
+- Your first recording asks for **camera** and **microphone** access.
+- Your first screen recording asks for **Screen & System Audio Recording** access. Enable **Boring Notch+** in **System Settings → Privacy & Security**, then restart the app. The Focus tab offers buttons for both steps.
+- Don't run Boring Notch+ and the original Boring Notch at the same time, or you'll get two notches. They can stay installed side by side: they're separate apps with separate settings.
 
-## Join our Discord Server
+## Using it
 
-<a href="https://discord.gg/GvYcYpAKTu" target="_blank"><img src="https://iili.io/28m3GHv.png" alt="Join The Boring Server!" style="height: 60px !important;width: 217px !important;" ></a>
+Hover over the notch (or click it) and open the **Focus** tab.
 
-## Star History
-<!-- BROKEN: GitHub now restricts the stargazer API for privacy reasons
-<a href="https://www.star-history.com/#TheBoredTeam/boring.notch&Timeline">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=TheBoredTeam/boring.notch&type=Timeline&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=TheBoredTeam/boring.notch&type=Timeline" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=TheBoredTeam/boring.notch&type=Timeline" />
- </picture>
-</a>
--->
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/TheBoredTeam/org-star-chart-updater/main/projects/boring.notch/chart-dark.svg">
-   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/TheBoredTeam/org-star-chart-updater/main/projects/boring.notch/chart-light.svg">
-   <img src="https://raw.githubusercontent.com/TheBoredTeam/org-star-chart-updater/main/projects/boring.notch/chart-light.svg" alt="TheBoredTeam/boring.notch GitHub star history">
- </picture>
+- **Left half, stopwatch:** play/pause, reset, marker, and the target buttons (∞ for no target).
+- **Right half, recording:** the record button, the microphone switch, the **Webcam | Screen | Both** picker, a live preview of the webcam while recording, and links to open the last video or show it in Finder.
 
-## Support us on Ko-fi!
-<!-- <a href="https://www.buymeacoffee.com/jfxh67wvfxq" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a> -->
-<a href="https://www.ko-fi.com/alexander5015" target="_blank"><img src="https://github.com/user-attachments/assets//a76175ef-7e93-475a-8b67-4922ba5964c2" alt="Support us on Ko-fi" style="height: 70px !important;width: 346px !important;" ></a>
+Everything else is in **Settings → Focus**:
 
-## 🎉 Acknowledgments
+| Section | Options |
+|---|---|
+| General | Show the Focus tab; show the stopwatch in the closed notch |
+| Target times | The three presets; sound when the target is reached |
+| Recording | Camera, microphone, 1080p or 720p |
+| Screen | Which screen to record, highlight clicks, hide the notch from recordings, bubble size, show the bubble in webcam-only recordings too |
+| Saving | Folder, add finished videos to the shelf, open the video when the recording ends |
 
-We would like to express our gratitude to the authors and maintainers of the open-source projects that made this possible. 
+## Privacy
 
-## Notable Projects
-- **[MediaRemoteAdapter](https://github.com/ungive/mediaremote-adapter)** –  An open-source project that allowed us to use the Now Playing source in macOS 15.4+
-- **[NotchDrop](https://github.com/Lakr233/NotchDrop)** – An open-source project that has been instrumental in developing the first version of the "Shelf" feature in Boring Notch.
+Everything stays on your Mac. Recordings are ordinary video files in the folder you chose, and nothing is uploaded anywhere. The webcam bubble is a normal window: it only ends up in a video when you record the screen.
 
-For a full list of licenses and attributions, please see the [Third-Party Licenses](./THIRD_PARTY_LICENSES) file.
+## Differences from boring.notch
 
-### Icon credits: [@maxtron95](https://github.com/maxtron95)
-### Website credits: [@himanshhhhuv](https://github.com/himanshhhhuv)
+- It's a separate app (bundle ID `com.osaiot.boringnotch`, named "Boring Notch+"), so it doesn't share settings or permissions with the original.
+- Automatic updates are off. To update, see [Updating](#updating).
+- It's based on boring.notch's `dev` branch (2.8 beta).
+- It fixes a bug where the selected tab's highlight could land on the wrong tab once there are three tabs.
 
-- **SwiftUI**: For making us look like coding wizards.
-- **You**: For being awesome and checking out **boring.notch**!
+## Updating
 
+If you downloaded the app, download the latest release and replace the old copy.
+
+If you built it, pull and run the script again:
+
+```bash
+git pull
+./scripts/install.sh
+```
+
+To bring in the latest changes from the original project too:
+
+```bash
+git remote add upstream https://github.com/TheBoredTeam/boring.notch.git   # only once
+git fetch upstream
+git merge upstream/dev
+./scripts/install.sh
+```
+
+If `README.md` conflicts during the merge, keep this one (`git checkout --ours README.md`).
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| macOS says the app can't be opened | Run the `xattr` command from [Install](#install), or use **Open Anyway** in Privacy & Security. |
+| The build fails with a signing or team error | Use `./scripts/install.sh`, which picks your team, or choose your team in Xcode under **Signing & Capabilities**. |
+| Screen recording still says access is off after you allowed it | Restart the app (the **Restart** button in the Focus tab). |
+| Two notches on screen | Quit the original Boring Notch and remove it from **System Settings → General → Login Items**. |
+| A recording stopped by itself | Open Console.app and filter by subsystem `com.osaiot.boringnotch`: the error code is logged there. |
+
+## Credits and license
+
+Boring Notch+ is built on [boring.notch](https://github.com/TheBoredTeam/boring.notch) by [TheBoredTeam](https://github.com/TheBoredTeam) and its contributors. Everything except the Focus features is their work.
+
+Like the original, it's released under the [GNU General Public License v3.0](LICENSE). Third-party components are listed in [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES).
